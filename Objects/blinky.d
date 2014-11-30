@@ -10,3 +10,4 @@
 .\objects\blinky.o: timers.h
 .\objects\blinky.o: adc16.h
 .\objects\blinky.o: uart.h
+.\objects\blinky.o: global_var.h

@@ -1,26 +1,13 @@
 #include "MKL25Z4.h"
 #include "timers.h"
 #include "stdio.h"
-
-#define buffer_ceil 128
+#include "global_var.h"
 
 volatile unsigned PIT_interrupt_counter = 0;
 void init_ADC0(void);
 unsigned char val;
 
-const uint32_t led_mask[] = {1UL << 18, 1UL << 19, 1UL << 1};
-const uint32_t camera_mask[]={1UL << 5, 1UL << 7, 1UL << 1};   //a new mask for camera
-char unsigned buffer[2][2][buffer_ceil];
-int unsigned buffer_index=0;
-int buffer_sel=0;
-int buffer_cam=0;
-int CLK;
-int DONE=0;
-int ADC_sel=0x6;
-unsigned long FB1=0;
-unsigned long FB2=0;
-extern unsigned int original_CFG2;
-unsigned short ADC_FLG=0;
+
 
 #define LED_RED    0
 #define LED_GREEN  1

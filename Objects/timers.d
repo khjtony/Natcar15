@@ -8,3 +8,4 @@
 .\objects\timers.o: timers.h
 .\objects\timers.o: adc16.h
 .\objects\timers.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\timers.o: global_var.h

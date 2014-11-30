@@ -10,42 +10,20 @@
 #include <MKL25Z4.H>
 #include <stdio.h>
 #include "Blinkly.h"
+#include "global_var.h"
 #define buffer_ceil 128
 
 void init_ADC0(void);
 volatile unsigned int tick = 0;
-const uint32_t led_mask[] = {1UL << 18, 1UL << 19, 1UL << 1};
 volatile unsigned short PW1 = 30000;					//set initial value for PW1 and PW2
 volatile unsigned short PW2 = 30000;
-extern int CLK;
-extern int DONE;
-extern int buffer_index;
-extern unsigned long FB1;
-extern unsigned long FB2;
-extern char unsigned buffer[2][2][buffer_ceil];
-extern int buffer_sel;     //global variable
-extern int buffer_cam;
-extern int ADC_sel;
 void translator(char keyIn);  //a translator to convert input value to char
 char keyOut[2];  //output buffer
 int current_read;
 int max=0;  //set up minimum max value
 int min=0xff;  //set up maximum min value
-char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};  // dictionary for hex transformation
-unsigned int original_CFG2;
 
-void LED_Initialize(void) {
-  PORTB->PCR[18] = (1UL <<  8);                      /* Pin PTB18 is GPIO */
-  PORTB->PCR[19] = (1UL <<  8);                      /* Pin PTB19 is GPIO */
-  PORTD->PCR[1]  = (1UL <<  8);                      /* Pin PTD1  is GPIO */ 
-	
-  FPTB->PDOR |= (led_mask[0] | led_mask[1] );          /* switch Red/Green LED off  */
-  FPTB->PDDR |= (led_mask[0] | led_mask[1]);          /* enable PTB18/19 as Output */
 
-  FPTD->PDOR |= led_mask[2];            /* switch Blue LED off  */
-  FPTD->PDDR |= led_mask[2];            /* enable PTD1 as Output */
-
-}
 
 void Init_ADC(void) {
 	
@@ -204,7 +182,6 @@ void Init_PWM(void) {
   MAIN function
  *----------------------------------------------------------------------------*/
 int main (void) {
-	char size;
 	unsigned char POT1; 
 	unsigned char POT2;
 //	char unsigned buffer_gate[buffer_ceil];
@@ -213,9 +190,9 @@ int main (void) {
   char keyIn;
 	int i=0;
 	int threshold;
+	int average=0;
 	char welcome[]="Lab 2a\r\nEnter 'p' to print buffer\r\n\0";
 //	int slope;
-	int unsigned average;
 //	int limit=2;
 	
 	SIM->SCGC5    |= (SIM_SCGC5_PORTB_MASK
