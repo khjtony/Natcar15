@@ -2,9 +2,9 @@
 #include "timers.h"
 #include "stdio.h"
 #include "global_var.h"
+#include "Kit_chain.h"
 
 volatile unsigned PIT_interrupt_counter = 0;
-void init_ADC0(void);
 unsigned char val;
 
 
@@ -13,9 +13,7 @@ unsigned char val;
 #define LED_GREEN  1
 #define LED_BLUE	 2
 
-void ADC_toggle(){
-  ADC_sel=13-ADC_sel;
-}
+
 
 
 void buffer_sel_toggle(){
@@ -51,21 +49,6 @@ void LED_Initialize(void) {
 }
 
 
-void Init_ADC_lab2_part1(void){
-	init_ADC0();			// initialize and calibrate ADC0
-	ADC0->CFG1 = (ADLPC_NORMAL |  DIFF_SINGLE  | ADIV_2 | ADLSMP_LONG | MODE_8 | ADICLK_BUS_2);	// 8 bit, Bus clock/2 = 12 MHz
-	ADC0->CFG2|=ADC_CFG2_MUXSEL_MASK;  //select B channel
-	ADC0->SC1[0] |= AIEN_ON| DIFF_SINGLE | ADC_SC1_ADCH(6); //start conversion on channel SE6b(PTD5)
-	
-	ADC0->SC2 = 0;		// ADTRG=0 (software trigger mode)
-	
-	
-	NVIC_SetPriority(ADC0_IRQn, 128); // 0, 64, 128 or 192
-	NVIC_ClearPendingIRQ(ADC0_IRQn); 
-	NVIC_EnableIRQ(ADC0_IRQn);
-	
-	
-}
 
 
 void ADC0_IRQHandler(void){
@@ -245,15 +228,7 @@ void PIT_IRQHandler() {
 		
 		
 		//read feedback
-		
-		
-		
-		
-    
-				
-		
-		
-		
+	
 		
 	} else if (PIT->CHANNEL[1].TFLG & PIT_TFLG_TIF_MASK) {
 		// clear status flag for timer channel 1

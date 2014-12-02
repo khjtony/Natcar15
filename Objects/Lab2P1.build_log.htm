@@ -22,23 +22,26 @@ Dialog DLL:      TARMCM1.DLL V1.08.00.0
  
 <h2>Project:</h2>
 D:\workspace\Natcar\Lab2P1.uvprojx
-Project File Date:  11/07/2014
+Project File Date:  12/02/2014
 
 <h2>Output:</h2>
 Rebuild target 'Blinky'
 compiling adc0.c...
 compiling adc16.c...
 compiling Blinky.c...
-Blinky.c(193): warning:  #550-D: variable "average" was set but never used
-        int average=0;
+Blinky.c(169): warning:  #111-D: statement is unreachable
+                if (UART0->D == 'p')  //if user input p, enter menu
 Blinky.c: 1 warning, 0 errors
 compiling timers.c...
 compiling uart.c...
 compiling global_var.c...
+compiling ADC_Kit.c...
+compiling PWM_Kit.c...
+compiling Kit_chain.c...
 assembling startup_MKL25Z4.s...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=5772 RO-data=248 RW-data=92 ZI-data=1540  
+Program Size: Code=4540 RO-data=248 RW-data=92 ZI-data=1540  
 ".\Objects\Lab2P1.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -68,7 +71,21 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
-CMSIS\4.2.0\CMSIS\Include
+
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
+
+   * Component: Keil::Device:Startup:1.0.0
+      Source file:   Device\Source\ARM\startup_MKL25Z4.s
+      Source file:   Device\Source\system_MKL25Z4.c
+  Source file:   Device\Source\ARM\startup_MKL25Z4.s
+      Source file:   Device\Source\system_MKL25Z4.c
+Target not created.
+eated.
+il::Device:Startup:1.0.0
+      Source file:   Device\Source\ARM\startup_MKL25Z4.s
+      Source file:   Device\Source\system_MKL25Z4.c
+Target not created.
+4.2.0\CMSIS\Include
   C:\Keil_v5\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
@@ -80,13 +97,13 @@ CMSIS\4.2.0\CMSIS\Include
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
 Target not created.
-3.40.0
-      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
-
-   * Component: Keil::Device:Startup:1.0.0
-      Source file:   Device\Source\ARM\startup_MKL25Z4.s
+   Source file:   Device\Source\system_MKL25Z4.c
+Target not created.
+.s
       Source file:   Device\Source\system_MKL25Z4.c
 Target not created.
-ARM\startup_MKL25Z4.s
+ Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
+Target not created.
+m_MKL25Z4.c
 Target not created.

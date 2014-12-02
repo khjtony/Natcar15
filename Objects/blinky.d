@@ -11,3 +11,7 @@
 .\objects\blinky.o: adc16.h
 .\objects\blinky.o: uart.h
 .\objects\blinky.o: global_var.h
+.\objects\blinky.o: ADC_kit.h
+.\objects\blinky.o: adc0.h
+.\objects\blinky.o: Kit_chain.h
+.\objects\blinky.o: PWM_Kit.h

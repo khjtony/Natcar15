@@ -1,4 +1,5 @@
- 
+#include "adc0.h" 
+
 void init_ADC0(void);
 
 #include <MKL25Z4.h>

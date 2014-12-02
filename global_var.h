@@ -17,6 +17,7 @@ extern unsigned long FB2;
 extern unsigned int original_CFG2;
 extern unsigned short ADC_FLG;
 extern char hex[];
-
+extern volatile unsigned short PW1;					//set initial value for PW1 and PW2
+extern volatile unsigned short PW2;
 
 #endif

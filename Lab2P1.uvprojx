@@ -453,6 +453,46 @@
               <FileType>5</FileType>
               <FilePath>.\uart.h</FilePath>
             </File>
+            <File>
+              <FileName>global_var.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\global_var.c</FilePath>
+            </File>
+            <File>
+              <FileName>global_var.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\global_var.h</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Kit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ADC_Kit.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC_Kit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ADC_Kit.h</FilePath>
+            </File>
+            <File>
+              <FileName>adc0.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\adc0.h</FilePath>
+            </File>
+            <File>
+              <FileName>PWM_Kit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PWM_Kit.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM_Kit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\PWM_Kit.h</FilePath>
+            </File>
+            <File>
+              <FileName>Kit_chain.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Kit_chain.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

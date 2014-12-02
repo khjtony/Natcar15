@@ -1,0 +1,16 @@
+.\objects\irqhandler.o: IRQHandler.c
+.\objects\irqhandler.o: C:\Keil_v5\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H
+.\objects\irqhandler.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h
+.\objects\irqhandler.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\irqhandler.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h
+.\objects\irqhandler.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h
+.\objects\irqhandler.o: C:\Keil_v5\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h
+.\objects\irqhandler.o: IRQHandler.h
+.\objects\irqhandler.o: global_var.h
+.\objects\irqhandler.o: Kit_chain.h
+.\objects\irqhandler.o: PWM_Kit.h
+.\objects\irqhandler.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\irqhandler.o: ADC_Kit.h
+.\objects\irqhandler.o: adc0.h
+.\objects\irqhandler.o: adc16.h
+.\objects\irqhandler.o: uart.h
