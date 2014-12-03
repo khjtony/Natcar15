@@ -3,6 +3,9 @@
 #include "MKL25Z4.h"
 #define buffer_ceil 128
 
+#define TRACK_ANY_GRP 8
+#define TRACK_ANY_ELE 16
+
 extern const uint32_t led_mask[];
 extern const uint32_t camera_mask[];   //a new mask for camera
 extern char unsigned buffer[2][2][buffer_ceil];
@@ -19,5 +22,7 @@ extern unsigned short ADC_FLG;
 extern char hex[];
 extern volatile unsigned short PW1;					//set initial value for PW1 and PW2
 extern volatile unsigned short PW2;
+
+
 
 #endif

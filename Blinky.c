@@ -20,10 +20,7 @@
 volatile unsigned int tick = 0;
 
 void translator(char keyIn);  //a translator to convert input value to char
-char keyOut[2];  //output buffer
 int current_read;
-int max=0;  //set up minimum max value
-int min=0xff;  //set up maximum min value
 
 
 
@@ -78,7 +75,6 @@ int main (void) {
 	int uart0_clk_khz;
 	
   char keyIn;
-	int i=0;
 	char welcome[]="Lab 2a\r\nEnter 'p' to print buffer\r\n\0";
 //	int slope;
 //	int limit=2;
@@ -160,42 +156,33 @@ int main (void) {
 	
 	while (1){   //Big while looping
   while (!uart0_getchar_present()) {  //if no input detected, print of data analysis
+		if (DONE==1){
 	  DEBUG_print_track(buffer[0][1-buffer_sel]);
 		DEBUG_print_track(buffer[1][1-buffer_sel]);
+		//DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
+		//DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
 		put("\r\n\r");
 		DONE=0;		
-			}
 		}
+			}
 		if (UART0->D == 'p')  //if user input p, enter menu
 		{
 		  Stop_PIT();
-			i=buffer_index;
 			
 			if (buffer_sel){
 				put("\r\nPing buffer\r\n");
 			}else{
 				put("\r\nPong buffer\r\n");
 			}
-			
-			i=0;
-			for(i=0;i<buffer_ceil;i++){
-				translator(buffer[0][1-buffer_sel][i]);
-				uart0_putchar(' ');
-			}
+			DEBUG_print_camera(buffer[0][1-buffer_sel]);
 			put("\r\n This is data from Camera2 \r\n");
-			i=0;
-			for(i=0;i<buffer_ceil;i++){
-				translator(buffer[1][1-buffer_sel][i]);
-				uart0_putchar(' ');
-			}
-			
+			DEBUG_print_camera(buffer[1][1-buffer_sel]);
 			put("\r\n");
 			translator(FB1);
 	    put("  FB1  ");
 	    translator(FB2);
 			put("/");
 			put("  FB2  ");
-			
 			
 			put("\r\nEnter 'c' to continue or 'q'to quit\r\n");
 			
@@ -211,18 +198,5 @@ int main (void) {
 		}
 	}
 	
-
-
-/*----------------------------------------------------------------------------
-  translater function
- *----------------------------------------------------------------------------*/
-
-void translator(char keyIn){
-	
-	int part1=keyIn&0xF0;
-	int part2=keyIn&0x0F;
-	part1=part1>>4;
-	uart0_putchar(hex[part1]);
-  uart0_putchar(hex[part2]);
 }
 

@@ -6,8 +6,8 @@ Section Cross References
 
     adc0.o(.text) refers to adc16.o(.text) for ADC_Config_Alt
     blinky.o(.text) refers to uidiv.o(.text) for __aeabi_uidivmod
-    blinky.o(.text) refers to uart.o(.text) for uart0_putchar
     blinky.o(.text) refers to memcpya.o(.text) for __aeabi_memcpy4
+    blinky.o(.text) refers to uart.o(.text) for uart0_init
     blinky.o(.text) refers to adc_kit.o(.text) for Init_ADC
     blinky.o(.text) refers to pwm_kit.o(.text) for Init_PWM
     blinky.o(.text) refers to timers.o(.text) for Init_PIT
@@ -25,9 +25,9 @@ Section Cross References
     adc_kit.o(.text) refers to adc0.o(.text) for init_ADC0
     adc_kit.o(.text) refers to global_var.o(.data) for ADC_sel
     pwm_kit.o(.text) refers to global_var.o(.data) for PW1
-    kit_chain.o(.text) refers to idiv.o(.text) for __aeabi_idivmod
     kit_chain.o(.text) refers to uart.o(.text) for uart0_putchar
-    kit_chain.o(.text) refers to global_var.o(.data) for DONE
+    kit_chain.o(.text) refers to idiv.o(.text) for __aeabi_idivmod
+    kit_chain.o(.text) refers to global_var.o(.data) for hex
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(STACK) for __initial_sp
     startup_mkl25z4.o(RESET) refers to startup_mkl25z4.o(.text) for Reset_Handler
     startup_mkl25z4.o(RESET) refers to timers.o(.text) for ADC0_IRQHandler
@@ -152,30 +152,30 @@ Image Symbol Table
     i.__scatterload_null                     0x000003fe   Section        2  handlers.o(i.__scatterload_null)
     .ARM.__at_0x400                          0x00000400   Section       16  startup_mkl25z4.o(.ARM.__at_0x400)
     .text                                    0x00000410   Section        0  blinky.o(.text)
-    NVIC_ClearPendingIRQ                     0x0000072b   Thumb Code    14  blinky.o(.text)
-    .text                                    0x00000820   Section        0  timers.o(.text)
-    NVIC_ClearPendingIRQ                     0x00000adf   Thumb Code    14  timers.o(.text)
-    NVIC_SetPriority                         0x00000aed   Thumb Code   110  timers.o(.text)
-    .text                                    0x00000bbc   Section        0  uart.o(.text)
-    .text                                    0x00000d74   Section        0  pwm_kit.o(.text)
-    NVIC_SetPriority                         0x00000d75   Thumb Code   110  pwm_kit.o(.text)
-    NVIC_EnableIRQ                           0x00000eb3   Thumb Code    14  pwm_kit.o(.text)
-    NVIC_ClearPendingIRQ                     0x00000ec1   Thumb Code    14  pwm_kit.o(.text)
-    .text                                    0x00000f00   Section        0  kit_chain.o(.text)
-    .text                                    0x00000f98   Section        0  system_mkl25z4.o(.text)
-    .text                                    0x000011b4   Section        0  uidiv.o(.text)
-    .text                                    0x000011e0   Section        0  idiv.o(.text)
-    .text                                    0x00001208   Section        0  memcpya.o(.text)
-    .text                                    0x0000122c   Section       36  init.o(.text)
-    i.__ARM_common_switch8                   0x00001250   Section        0  system_mkl25z4.o(i.__ARM_common_switch8)
-    i.__scatterload_zeroinit                 0x0000126c   Section       14  handlers.o(i.__scatterload_zeroinit)
-    .constdata                               0x0000127c   Section       24  global_var.o(.constdata)
-    .data                                    0x1ffff000   Section       20  blinky.o(.data)
-    .data                                    0x1ffff014   Section        5  timers.o(.data)
-    .data                                    0x1ffff01c   Section       58  global_var.o(.data)
-    .data                                    0x1ffff058   Section        4  system_mkl25z4.o(.data)
-    .bss                                     0x1ffff05c   Section      512  global_var.o(.bss)
-    STACK                                    0x1ffff260   Section     1024  startup_mkl25z4.o(STACK)
+    NVIC_ClearPendingIRQ                     0x000007bd   Thumb Code    14  blinky.o(.text)
+    .text                                    0x00000938   Section        0  timers.o(.text)
+    NVIC_ClearPendingIRQ                     0x00000bf7   Thumb Code    14  timers.o(.text)
+    NVIC_SetPriority                         0x00000c05   Thumb Code   110  timers.o(.text)
+    .text                                    0x00000cd4   Section        0  uart.o(.text)
+    .text                                    0x00000e8c   Section        0  pwm_kit.o(.text)
+    NVIC_SetPriority                         0x00000e8d   Thumb Code   110  pwm_kit.o(.text)
+    NVIC_EnableIRQ                           0x00000fcb   Thumb Code    14  pwm_kit.o(.text)
+    NVIC_ClearPendingIRQ                     0x00000fd9   Thumb Code    14  pwm_kit.o(.text)
+    .text                                    0x00001018   Section        0  kit_chain.o(.text)
+    .text                                    0x00001220   Section        0  system_mkl25z4.o(.text)
+    .text                                    0x0000143c   Section        0  uidiv.o(.text)
+    .text                                    0x00001468   Section        0  idiv.o(.text)
+    .text                                    0x00001490   Section        0  memcpya.o(.text)
+    .text                                    0x000014b4   Section       36  init.o(.text)
+    i.__ARM_common_switch8                   0x000014d8   Section        0  system_mkl25z4.o(i.__ARM_common_switch8)
+    i.__scatterload_zeroinit                 0x000014f4   Section       14  handlers.o(i.__scatterload_zeroinit)
+    .constdata                               0x00001504   Section       24  global_var.o(.constdata)
+    .data                                    0x1ffff000   Section        8  blinky.o(.data)
+    .data                                    0x1ffff008   Section        5  timers.o(.data)
+    .data                                    0x1ffff010   Section       58  global_var.o(.data)
+    .data                                    0x1ffff04c   Section        4  system_mkl25z4.o(.data)
+    .bss                                     0x1ffff050   Section      512  global_var.o(.bss)
+    STACK                                    0x1ffff250   Section     1024  startup_mkl25z4.o(STACK)
 
     Global Symbols
 
@@ -247,66 +247,66 @@ Image Symbol Table
     __scatterload_null                       0x000003ff   Thumb Code     2  handlers.o(i.__scatterload_null)
     TPM1_IRQHandler                          0x00000411   Thumb Code   104  blinky.o(.text)
     TPM0_IRQHandler                          0x00000479   Thumb Code    48  blinky.o(.text)
-    translator                               0x000004a9   Thumb Code    34  blinky.o(.text)
-    main                                     0x000004cb   Thumb Code   608  blinky.o(.text)
-    buffer_sel_toggle                        0x00000821   Thumb Code    14  timers.o(.text)
-    buffer_cam_toggle                        0x0000082f   Thumb Code    14  timers.o(.text)
-    get_buffer                               0x0000083d   Thumb Code    40  timers.o(.text)
-    LED_Initialize                           0x00000865   Thumb Code    90  timers.o(.text)
-    ADC0_IRQHandler                          0x000008bf   Thumb Code   280  timers.o(.text)
-    Init_PIT                                 0x000009d7   Thumb Code   118  timers.o(.text)
-    Start_PIT                                0x00000a4d   Thumb Code    14  timers.o(.text)
-    Stop_PIT                                 0x00000a5b   Thumb Code    14  timers.o(.text)
-    PIT_IRQHandler                           0x00000a69   Thumb Code   118  timers.o(.text)
-    uart0_init                               0x00000bbd   Thumb Code   342  uart.o(.text)
-    uart0_getchar                            0x00000d13   Thumb Code    20  uart.o(.text)
-    uart0_putchar                            0x00000d27   Thumb Code    20  uart.o(.text)
-    uart0_putchars                           0x00000d3b   Thumb Code    34  uart.o(.text)
-    uart0_getchar_present                    0x00000d5d   Thumb Code    10  uart.o(.text)
-    Init_PWM                                 0x00000de3   Thumb Code   208  pwm_kit.o(.text)
-    dutyCycle                                0x00000f01   Thumb Code    30  kit_chain.o(.text)
-    put                                      0x00000f1f   Thumb Code    22  kit_chain.o(.text)
-    DEBUG_print_track                        0x00000f35   Thumb Code    92  kit_chain.o(.text)
-    SystemInit                               0x00000f99   Thumb Code   168  system_mkl25z4.o(.text)
-    SystemCoreClockUpdate                    0x00001041   Thumb Code   322  system_mkl25z4.o(.text)
-    __aeabi_uidiv                            0x000011b5   Thumb Code     0  uidiv.o(.text)
-    __aeabi_uidivmod                         0x000011b5   Thumb Code    44  uidiv.o(.text)
-    __aeabi_idiv                             0x000011e1   Thumb Code     0  idiv.o(.text)
-    __aeabi_idivmod                          0x000011e1   Thumb Code    40  idiv.o(.text)
-    __aeabi_memcpy                           0x00001209   Thumb Code    36  memcpya.o(.text)
-    __aeabi_memcpy4                          0x00001209   Thumb Code     0  memcpya.o(.text)
-    __aeabi_memcpy8                          0x00001209   Thumb Code     0  memcpya.o(.text)
-    __scatterload                            0x0000122d   Thumb Code    28  init.o(.text)
-    __scatterload_rt2                        0x0000122d   Thumb Code     0  init.o(.text)
-    __ARM_common_switch8                     0x00001251   Thumb Code    28  system_mkl25z4.o(i.__ARM_common_switch8)
-    __scatterload_zeroinit                   0x0000126d   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    led_mask                                 0x0000127c   Data          12  global_var.o(.constdata)
-    camera_mask                              0x00001288   Data          12  global_var.o(.constdata)
-    Region$$Table$$Base                      0x00001294   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x000012b4   Number         0  anon$$obj.o(Region$$Table)
+    main                                     0x000004a9   Thumb Code   788  blinky.o(.text)
+    buffer_sel_toggle                        0x00000939   Thumb Code    14  timers.o(.text)
+    buffer_cam_toggle                        0x00000947   Thumb Code    14  timers.o(.text)
+    get_buffer                               0x00000955   Thumb Code    40  timers.o(.text)
+    LED_Initialize                           0x0000097d   Thumb Code    90  timers.o(.text)
+    ADC0_IRQHandler                          0x000009d7   Thumb Code   280  timers.o(.text)
+    Init_PIT                                 0x00000aef   Thumb Code   118  timers.o(.text)
+    Start_PIT                                0x00000b65   Thumb Code    14  timers.o(.text)
+    Stop_PIT                                 0x00000b73   Thumb Code    14  timers.o(.text)
+    PIT_IRQHandler                           0x00000b81   Thumb Code   118  timers.o(.text)
+    uart0_init                               0x00000cd5   Thumb Code   342  uart.o(.text)
+    uart0_getchar                            0x00000e2b   Thumb Code    20  uart.o(.text)
+    uart0_putchar                            0x00000e3f   Thumb Code    20  uart.o(.text)
+    uart0_putchars                           0x00000e53   Thumb Code    34  uart.o(.text)
+    uart0_getchar_present                    0x00000e75   Thumb Code    10  uart.o(.text)
+    Init_PWM                                 0x00000efb   Thumb Code   208  pwm_kit.o(.text)
+    translator                               0x00001019   Thumb Code    34  kit_chain.o(.text)
+    dutyCycle                                0x0000103b   Thumb Code    30  kit_chain.o(.text)
+    put                                      0x00001059   Thumb Code    22  kit_chain.o(.text)
+    DEBUG_print_track                        0x0000106f   Thumb Code    84  kit_chain.o(.text)
+    DEBUG_print_camera                       0x000010c3   Thumb Code    30  kit_chain.o(.text)
+    SINGLE_TRACK_ANY                         0x000010e1   Thumb Code   250  kit_chain.o(.text)
+    DEBUG_print_midpoint                     0x000011db   Thumb Code    62  kit_chain.o(.text)
+    SystemInit                               0x00001221   Thumb Code   168  system_mkl25z4.o(.text)
+    SystemCoreClockUpdate                    0x000012c9   Thumb Code   322  system_mkl25z4.o(.text)
+    __aeabi_uidiv                            0x0000143d   Thumb Code     0  uidiv.o(.text)
+    __aeabi_uidivmod                         0x0000143d   Thumb Code    44  uidiv.o(.text)
+    __aeabi_idiv                             0x00001469   Thumb Code     0  idiv.o(.text)
+    __aeabi_idivmod                          0x00001469   Thumb Code    40  idiv.o(.text)
+    __aeabi_memcpy                           0x00001491   Thumb Code    36  memcpya.o(.text)
+    __aeabi_memcpy4                          0x00001491   Thumb Code     0  memcpya.o(.text)
+    __aeabi_memcpy8                          0x00001491   Thumb Code     0  memcpya.o(.text)
+    __scatterload                            0x000014b5   Thumb Code    28  init.o(.text)
+    __scatterload_rt2                        0x000014b5   Thumb Code     0  init.o(.text)
+    __ARM_common_switch8                     0x000014d9   Thumb Code    28  system_mkl25z4.o(i.__ARM_common_switch8)
+    __scatterload_zeroinit                   0x000014f5   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    led_mask                                 0x00001504   Data          12  global_var.o(.constdata)
+    camera_mask                              0x00001510   Data          12  global_var.o(.constdata)
+    Region$$Table$$Base                      0x0000151c   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x0000153c   Number         0  anon$$obj.o(Region$$Table)
     tick                                     0x1ffff000   Data           4  blinky.o(.data)
-    keyOut                                   0x1ffff004   Data           2  blinky.o(.data)
-    current_read                             0x1ffff008   Data           4  blinky.o(.data)
-    max                                      0x1ffff00c   Data           4  blinky.o(.data)
-    min                                      0x1ffff010   Data           4  blinky.o(.data)
-    PIT_interrupt_counter                    0x1ffff014   Data           4  timers.o(.data)
-    val                                      0x1ffff018   Data           1  timers.o(.data)
-    buffer_index                             0x1ffff01c   Data           4  global_var.o(.data)
-    buffer_sel                               0x1ffff020   Data           4  global_var.o(.data)
-    buffer_cam                               0x1ffff024   Data           4  global_var.o(.data)
-    CLK                                      0x1ffff028   Data           4  global_var.o(.data)
-    DONE                                     0x1ffff02c   Data           4  global_var.o(.data)
-    ADC_sel                                  0x1ffff030   Data           4  global_var.o(.data)
-    FB1                                      0x1ffff034   Data           4  global_var.o(.data)
-    FB2                                      0x1ffff038   Data           4  global_var.o(.data)
-    original_CFG2                            0x1ffff03c   Data           4  global_var.o(.data)
-    ADC_FLG                                  0x1ffff040   Data           2  global_var.o(.data)
-    hex                                      0x1ffff042   Data          16  global_var.o(.data)
-    PW1                                      0x1ffff052   Data           2  global_var.o(.data)
-    PW2                                      0x1ffff054   Data           2  global_var.o(.data)
-    SystemCoreClock                          0x1ffff058   Data           4  system_mkl25z4.o(.data)
-    buffer                                   0x1ffff05c   Data         512  global_var.o(.bss)
-    __initial_sp                             0x1ffff660   Data           0  startup_mkl25z4.o(STACK)
+    current_read                             0x1ffff004   Data           4  blinky.o(.data)
+    PIT_interrupt_counter                    0x1ffff008   Data           4  timers.o(.data)
+    val                                      0x1ffff00c   Data           1  timers.o(.data)
+    buffer_index                             0x1ffff010   Data           4  global_var.o(.data)
+    buffer_sel                               0x1ffff014   Data           4  global_var.o(.data)
+    buffer_cam                               0x1ffff018   Data           4  global_var.o(.data)
+    CLK                                      0x1ffff01c   Data           4  global_var.o(.data)
+    DONE                                     0x1ffff020   Data           4  global_var.o(.data)
+    ADC_sel                                  0x1ffff024   Data           4  global_var.o(.data)
+    FB1                                      0x1ffff028   Data           4  global_var.o(.data)
+    FB2                                      0x1ffff02c   Data           4  global_var.o(.data)
+    original_CFG2                            0x1ffff030   Data           4  global_var.o(.data)
+    ADC_FLG                                  0x1ffff034   Data           2  global_var.o(.data)
+    hex                                      0x1ffff036   Data          16  global_var.o(.data)
+    PW1                                      0x1ffff046   Data           2  global_var.o(.data)
+    PW2                                      0x1ffff048   Data           2  global_var.o(.data)
+    SystemCoreClock                          0x1ffff04c   Data           4  system_mkl25z4.o(.data)
+    buffer                                   0x1ffff050   Data         512  global_var.o(.bss)
+    __initial_sp                             0x1ffff650   Data           0  startup_mkl25z4.o(STACK)
 
 
 
@@ -316,9 +316,9 @@ Memory Map of the image
 
   Image Entry point : 0x000003d5
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x00001310, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x0000158c, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x000012b4, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000153c, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -339,42 +339,41 @@ Memory Map of the image
     0x000003f0   0x0000000e   Code   RO          339    i.__scatterload_copy  mc_p.l(handlers.o)
     0x000003fe   0x00000002   Code   RO          340    i.__scatterload_null  mc_p.l(handlers.o)
     0x00000400   0x00000010   Code   RO          275    .ARM.__at_0x400     startup_mkl25z4.o
-    0x00000410   0x00000410   Code   RO           71    .text               blinky.o
-    0x00000820   0x0000039c   Code   RO          127    .text               timers.o
-    0x00000bbc   0x000001b8   Code   RO          160    .text               uart.o
-    0x00000d74   0x0000018c   Code   RO          228    .text               pwm_kit.o
-    0x00000f00   0x00000098   Code   RO          251    .text               kit_chain.o
-    0x00000f98   0x0000021c   Code   RO          284    .text               system_mkl25z4.o
-    0x000011b4   0x0000002c   Code   RO          313    .text               mc_p.l(uidiv.o)
-    0x000011e0   0x00000028   Code   RO          315    .text               mc_p.l(idiv.o)
-    0x00001208   0x00000024   Code   RO          317    .text               mc_p.l(memcpya.o)
-    0x0000122c   0x00000024   Code   RO          335    .text               mc_p.l(init.o)
-    0x00001250   0x0000001c   Code   RO          302    i.__ARM_common_switch8  system_mkl25z4.o
-    0x0000126c   0x0000000e   Code   RO          341    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x0000127a   0x00000002   PAD
-    0x0000127c   0x00000018   Data   RO          184    .constdata          global_var.o
-    0x00001294   0x00000020   Data   RO          337    Region$$Table       anon$$obj.o
+    0x00000410   0x00000528   Code   RO           71    .text               blinky.o
+    0x00000938   0x0000039c   Code   RO          127    .text               timers.o
+    0x00000cd4   0x000001b8   Code   RO          160    .text               uart.o
+    0x00000e8c   0x0000018c   Code   RO          228    .text               pwm_kit.o
+    0x00001018   0x00000208   Code   RO          251    .text               kit_chain.o
+    0x00001220   0x0000021c   Code   RO          284    .text               system_mkl25z4.o
+    0x0000143c   0x0000002c   Code   RO          313    .text               mc_p.l(uidiv.o)
+    0x00001468   0x00000028   Code   RO          315    .text               mc_p.l(idiv.o)
+    0x00001490   0x00000024   Code   RO          317    .text               mc_p.l(memcpya.o)
+    0x000014b4   0x00000024   Code   RO          335    .text               mc_p.l(init.o)
+    0x000014d8   0x0000001c   Code   RO          302    i.__ARM_common_switch8  system_mkl25z4.o
+    0x000014f4   0x0000000e   Code   RO          341    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x00001502   0x00000002   PAD
+    0x00001504   0x00000018   Data   RO          184    .constdata          global_var.o
+    0x0000151c   0x00000020   Data   RO          337    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Base: 0x1ffff000, Size: 0x0000005c, Max: 0xffffffff, ABSOLUTE)
-
-    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x1ffff000   0x00000014   Data   RW           72    .data               blinky.o
-    0x1ffff014   0x00000005   Data   RW          128    .data               timers.o
-    0x1ffff019   0x00000003   PAD
-    0x1ffff01c   0x0000003a   Data   RW          185    .data               global_var.o
-    0x1ffff056   0x00000002   PAD
-    0x1ffff058   0x00000004   Data   RW          285    .data               system_mkl25z4.o
-
-
-    Execution Region ER_ZI (Base: 0x1ffff05c, Size: 0x00000604, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Base: 0x1ffff000, Size: 0x00000050, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x1ffff05c   0x00000200   Zero   RW          183    .bss                global_var.o
-    0x1ffff25c   0x00000004   PAD
-    0x1ffff260   0x00000400   Zero   RW          272    STACK               startup_mkl25z4.o
+    0x1ffff000   0x00000008   Data   RW           72    .data               blinky.o
+    0x1ffff008   0x00000005   Data   RW          128    .data               timers.o
+    0x1ffff00d   0x00000003   PAD
+    0x1ffff010   0x0000003a   Data   RW          185    .data               global_var.o
+    0x1ffff04a   0x00000002   PAD
+    0x1ffff04c   0x00000004   Data   RW          285    .data               system_mkl25z4.o
+
+
+    Execution Region ER_ZI (Base: 0x1ffff050, Size: 0x00000600, Max: 0xffffffff, ABSOLUTE)
+
+    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x1ffff050   0x00000200   Zero   RW          183    .bss                global_var.o
+    0x1ffff250   0x00000400   Zero   RW          272    STACK               startup_mkl25z4.o
 
 
 ==============================================================================
@@ -387,9 +386,9 @@ Image component sizes
         84         14          0          0          0     100404   adc0.o
        412          6          0          0          0       1254   adc16.o
        272         20          0          0          0       7007   adc_kit.o
-      1040        232          0         20          0     101041   blinky.o
+      1320        366          0          8          0     100423   blinky.o
          0          0         24         58        512       1100   global_var.o
-       152          8          0          0          0       1030   kit_chain.o
+       520          8          0          0          0       2166   kit_chain.o
        396         50          0          0          0       6643   pwm_kit.o
         44         24        192          0       1024        776   startup_mkl25z4.o
        568         60          0          4          0       1233   system_mkl25z4.o
@@ -397,9 +396,9 @@ Image component sizes
        440         14          0          0          0       1786   uart.o
 
     ----------------------------------------------------------------------
-      4332        526        248         92       1540     230377   Object Totals
+      4980        660        248         80       1536     230895   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-         0          0          0          5          4          0   (incl. Padding)
+         0          0          0          5          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -439,15 +438,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      4540        542        248         92       1540     230141   Grand Totals
-      4540        542        248         92       1540     230141   ELF Image Totals
-      4540        542        248         92          0          0   ROM Totals
+      5188        676        248         80       1536     230659   Grand Totals
+      5188        676        248         80       1536     230659   ELF Image Totals
+      5188        676        248         80          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 4788 (   4.68kB)
-    Total RW  Size (RW Data + ZI Data)              1632 (   1.59kB)
-    Total ROM Size (Code + RO Data + RW Data)       4880 (   4.77kB)
+    Total RO  Size (Code + RO Data)                 5436 (   5.31kB)
+    Total RW  Size (RW Data + ZI Data)              1616 (   1.58kB)
+    Total ROM Size (Code + RO Data + RW Data)       5516 (   5.39kB)
 
 ==============================================================================
 

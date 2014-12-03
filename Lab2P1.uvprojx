@@ -493,6 +493,11 @@
               <FileType>5</FileType>
               <FilePath>.\Kit_chain.h</FilePath>
             </File>
+            <File>
+              <FileName>Kit_chain.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Kit_chain.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

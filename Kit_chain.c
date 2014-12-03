@@ -2,6 +2,17 @@
 #include "Kit_chain.h"
 
 
+void translator(char keyIn){
+	
+	int part1=keyIn&0xF0;
+	int part2=keyIn&0x0F;
+	part1=part1>>4;
+	uart0_putchar(hex[part1]);
+  uart0_putchar(hex[part2]);
+}
+
+
+
 // calculate the duty cycle
 unsigned int dutyCycle(char POT) {
 	int PW;
@@ -26,8 +37,7 @@ void DEBUG_print_track(char unsigned *buffer){
 	  int min=0xff;
 		int i=0;
 	  int threshold=0;
-		//keyIn=0;
-		if(DONE==1){   
+		//keyIn=0;   
       for (i=10;i<buffer_ceil-10;i++){
 				if (buffer[i]>max){
 					max=buffer[i];
@@ -46,9 +56,107 @@ void DEBUG_print_track(char unsigned *buffer){
 				}else{
 					//buffer_gate[i]=0;
 					uart0_putchar(' ');
-				}
+				
 			}
-		}
-		
+		}	
 }
+
+void DEBUG_print_camera(char unsigned *buffer){
+  int i=0;    
+	for(i=0;i<buffer_ceil;i++){
+		translator(buffer[i]);
+		uart0_putchar(' ');
+	}
+
+}
+
+void DEBUG_print_midpoint(char unsigned *buffer){
+  int midpoint=SINGLE_TRACK_ANY(buffer);
+	int i=0;
+	for(i=0;i<midpoint;i++){
+		uart0_putchar(' ');
+	}
+	
+	i=0;
+	
+	uart0_putchar('X');
+	for(i=0;i<(128-midpoint-1);i++){
+		uart0_putchar(' ');
+	}
+	
+
+}
+
+
+int SINGLE_TRACK_ANY(char unsigned *buffer){
+	int i=0;
+	int j=0;
+	long int max=0;
+	long int min=16*0xff;
+	long int diff;
+	int index_min;
+	int left_bound;
+	int right_bound;
+	int position;
+	long int bright_avg[TRACK_ANY_ELE];
+	
+	//store all 128 elements in 8 blocks
+	for (i=0;i<TRACK_ANY_GRP;i++){
+		for (j=0;j<TRACK_ANY_ELE;j++){
+		  bright_avg[j]=buffer[i*8+j];
+		}
+		j=0;
+	}
+	
+	//find largest value
+	i=0;
+	for (i=0;i<TRACK_ANY_GRP;i++){
+	  if (bright_avg[i]>max){
+			max=bright_avg[i];
+		}
+		if (bright_avg[i]<min){
+			min=bright_avg[i];
+			index_min=i;
+		}
+		diff=max-min;
+		diff=diff>>1;
+		
+		if (index_min>0 || index_min <6){
+			//find left bound
+			if (bright_avg[i-1]<(diff+bright_avg[i])){
+				left_bound=index_min*TRACK_ANY_ELE-(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
+		}
+			else{
+			  left_bound=index_min*TRACK_ANY_ELE-(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
+			}
+			
+			//find right bound
+			if (bright_avg[i+1]<(diff+bright_avg[i])){
+				if(bright_avg[i+2]<(diff+bright_avg[i])){
+				  left_bound=(index_min+1)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
+		    }
+				else{
+				left_bound=(index_min+1)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
+		    }
+			left_bound=(index_min)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
+		  }
+			else{
+			  left_bound=index_min*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
+			}
+			
+		  position=right_bound-left_bound;
+			
+		}
+    else{
+		if (index_min==0){
+		  position=TRACK_ANY_ELE>>1;
+		}
+		else{
+		  position=index_min*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1);
+		}
+		}
+		}
+	return position;
+}
+		
 

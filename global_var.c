@@ -1,6 +1,7 @@
 #include "MKL25Z4.h"
 #include "global_var.h"
 
+
 const uint32_t led_mask[] = {1UL << 18, 1UL << 19, 1UL << 1};
 const uint32_t camera_mask[]={1UL << 5, 1UL << 7, 1UL << 1};   //a new mask for camera
 char unsigned buffer[2][2][buffer_ceil];
