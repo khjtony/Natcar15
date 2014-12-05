@@ -41,3 +41,11 @@ void Init_ADC_lab2_part1(void){
 	
 }
 
+void ADC_CHa(){
+  ADC0 -> CFG2 &= 0x0<<4;
+}
+
+void ADC_CHb(){
+  ADC0 -> CFG2 |= 0x1<<4;
+}
+

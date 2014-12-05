@@ -112,6 +112,7 @@ void ADC0_IRQHandler(void){
 	//toggle ADC port
 	if (DONE){
 	ADC_FLG=3;
+	ADC_CHa();
 	ADC0->SC1[0] = 0x3 |1UL<<6;
 	}
 	
@@ -123,7 +124,7 @@ void ADC0_IRQHandler(void){
 		NVIC_ClearPendingIRQ(ADC0_IRQn);
 	  FB1 = ADC0->R[0];				// read result register
 	  ADC_FLG=7;
-    ADC0 -> CFG2 |= ADC_CFG2_MUXSEL_MASK;
+    
 	  ADC0->SC1[0] = 0x7 |1UL<<6;
 		
 	}
@@ -131,7 +132,7 @@ void ADC0_IRQHandler(void){
 		NVIC_ClearPendingIRQ(ADC0_IRQn);
 	  FB2 = ADC0->R[0];				// read result register
 		ADC_FLG=0;
-		ADC0 -> CFG2=original_CFG2;
+		ADC_CHb();
 	}
 		
 	

@@ -202,3 +202,23 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 }
 */		
 
+void translator_4(int keyIn){
+	
+	int part1=keyIn&0xF000;
+	int part2=keyIn&0x0F00;
+	int part3=keyIn&0x00F0;
+	int part4=keyIn&0x000F;
+	
+	part1=part1>>12;
+	part2=part1>>8;
+	part3=part1>>4;
+	uart0_putchar(hex[part1]);
+  uart0_putchar(hex[part2]);
+	uart0_putchar(hex[part3]);
+  uart0_putchar(hex[part4]);
+} 
+
+
+
+
+

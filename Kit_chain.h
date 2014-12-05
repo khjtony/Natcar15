@@ -13,5 +13,6 @@ void put(char *ptr_str);
 void DEBUG_print_track(char unsigned *buffer);
 int SINGLE_TRACK_ANY(char unsigned *buffer);
 int DEBUG_print_midpoint(char unsigned *buffer);
+void translator_4(int keyIn);
 
 #endif

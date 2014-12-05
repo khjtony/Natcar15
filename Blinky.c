@@ -129,7 +129,6 @@ int main (void) {
 	Init_PWM_motor();
   Init_PWM_servo();
 	Init_PIT(10000);																		// count-down period = 100HZ
-	original_CFG2=ADC0 -> CFG2;
 	FPTE->PSOR = 1UL<<21;
 	
 	//Application start
@@ -145,15 +144,28 @@ int main (void) {
 	while(!(FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
 	POT1 = Read_ADC(0xD);
 	POT2 = Read_ADC(0xC);
-	translator(POT1);
-	put("  POT1  ");
-	translator(POT2);
-	put("  POT2  ");
-	//calculate duty cycle
 	PW1 = dutyCycle(POT1);
 	PW2 = dutyCycle(POT2);
+		if (POT_COUNT_DOWN<0){
+			put("POT1/PW1:  ");
+			translator(POT1);
+	    put("/");
+			translator_4(PW1);
+			
+			put("  POT2/PW2:");
+	    translator(POT2);
+	    put("/");
+    	translator_4(PW2);
+			POT_COUNT_DOWN=1000;
+			put("\r\n");
+		}
+		POT_COUNT_DOWN=POT_COUNT_DOWN-1;
+	//calculate duty cycle
 	}
+	
 	uart0_putchars(welcome);
+	
+	
 	
 	Start_PIT();
 	
@@ -163,8 +175,8 @@ int main (void) {
 	 // DEBUG_print_track(buffer[0][1-buffer_sel]);
 	//	DEBUG_print_track(buffer[1][1-buffer_sel]);
 //		put("\r\n\r");
-//		DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
-	//	DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
+		DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
+		DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
 	//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
    // translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
 //SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);

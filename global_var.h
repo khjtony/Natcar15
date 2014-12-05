@@ -23,6 +23,8 @@ extern char hex[];
 extern volatile unsigned short PW1;					//set initial value for PW1 and PW2
 extern volatile unsigned short PW2;
 extern volatile unsigned short PW3;
+extern char* PW_chars;
+extern int POT_COUNT_DOWN;
 
 
 #endif

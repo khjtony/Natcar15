@@ -13,6 +13,8 @@ void ADC_toggle(void);
 void Init_ADC_lab2_part1(void);
 void translator(char keyIn);
 void DEBUG_print_camera(char unsigned *buffer);
+void ADC_CHa(void);
+void ADC_CHb(void);
 
 #endif
 
