@@ -22,7 +22,7 @@ extern unsigned short ADC_FLG;
 extern char hex[];
 extern volatile unsigned short PW1;					//set initial value for PW1 and PW2
 extern volatile unsigned short PW2;
-
+extern volatile unsigned short PW3;
 
 
 #endif

@@ -1,5 +1,7 @@
 #include <MKL25Z4.H>
 #include "Kit_chain.h"
+int left=0;
+int right = 0;
 
 
 void translator(char keyIn){
@@ -48,11 +50,11 @@ void DEBUG_print_track(char unsigned *buffer){
 			//if done, begin analyze data
 		  //Method one, voltage method			
       i=0;
-			threshold=(max-min)>>1;
+			threshold = ((max-min)>>3) + min;
 			for (i=0;i<buffer_ceil;i++){
 				if (buffer[i]>=threshold){
 					//buffer_gate[i]=1;
-					uart0_putchar('X');
+					uart0_putchar('*');
 				}else{
 					//buffer_gate[i]=0;
 					uart0_putchar(' ');
@@ -70,7 +72,7 @@ void DEBUG_print_camera(char unsigned *buffer){
 
 }
 
-void DEBUG_print_midpoint(char unsigned *buffer){
+int DEBUG_print_midpoint(char unsigned *buffer){
   int midpoint=SINGLE_TRACK_ANY(buffer);
 	int i=0;
 	for(i=0;i<midpoint;i++){
@@ -84,10 +86,49 @@ void DEBUG_print_midpoint(char unsigned *buffer){
 		uart0_putchar(' ');
 	}
 	
+	return midpoint;
 
 }
 
+int SINGLE_TRACK_ANY(char unsigned *buffer){
+  int max=0;
+	int min=0xff;
+  int i=0;
+	int threshold=0;   
+	int left_bound;
+	int right_bound;
+  for (i=10;i<buffer_ceil-10;i++){
+	if (buffer[i]>max){
+	  max=buffer[i];
+	}else if(buffer[i]<min){
+		min=buffer[i];
+	}
+	}			
+  
+	threshold=((max-min)>>3)+min;
+	i=9;
+	while (buffer[i]>threshold && i<127){
+		i=i+1;
+   
+	}
+	left_bound=i;
+	
 
+	
+	i=115;
+	while (buffer[i]>threshold && i>0){
+		i=i-1;
+}
+	right_bound=i;
+
+
+
+	return ((right_bound+left_bound)>>1);
+}
+
+
+
+/*
 int SINGLE_TRACK_ANY(char unsigned *buffer){
 	int i=0;
 	int j=0;
@@ -95,15 +136,16 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 	long int min=16*0xff;
 	long int diff;
 	int index_min;
-	int left_bound;
-	int right_bound;
+	int left_bound=0;
+	int right_bound=128;
 	int position;
 	long int bright_avg[TRACK_ANY_ELE];
 	
 	//store all 128 elements in 8 blocks
 	for (i=0;i<TRACK_ANY_GRP;i++){
+		bright_avg[i]=0;
 		for (j=0;j<TRACK_ANY_ELE;j++){
-		  bright_avg[j]=buffer[i*8+j];
+		  bright_avg[i]=buffer[i*8+j]+bright_avg[i];
 		}
 		j=0;
 	}
@@ -123,7 +165,7 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 		
 		if (index_min>0 || index_min <6){
 			//find left bound
-			if (bright_avg[i-1]<(diff+bright_avg[i])){
+			if (bright_avg[i-1]<(diff+min)){
 				left_bound=index_min*TRACK_ANY_ELE-(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
 		}
 			else{
@@ -144,7 +186,7 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 			  left_bound=index_min*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
 			}
 			
-		  position=right_bound-left_bound;
+		  position=(right_bound+left_bound)>>1;
 			
 		}
     else{
@@ -158,5 +200,5 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 		}
 	return position;
 }
-		
+*/		
 

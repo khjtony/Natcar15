@@ -5,9 +5,9 @@
 #include "global_var.h"
 #include <stdio.h>
 
-void Init_PWM(void);
+void Init_PWM_motor(void);
 
-
+void Init_PWM_servo(void);
 
 
 

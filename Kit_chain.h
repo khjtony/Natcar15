@@ -12,6 +12,6 @@ unsigned int dutyCycle(char POT);
 void put(char *ptr_str);
 void DEBUG_print_track(char unsigned *buffer);
 int SINGLE_TRACK_ANY(char unsigned *buffer);
-void DEBUG_print_midpoint(char unsigned *buffer);
+int DEBUG_print_midpoint(char unsigned *buffer);
 
 #endif

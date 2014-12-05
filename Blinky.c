@@ -35,10 +35,10 @@ void TPM1_IRQHandler(void) {
 // clear the overflow mask by writing 1 to TOF
 	
 		TPM1->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK;
-		TPM1->CONTROLS[0].CnV = PW1;
+		TPM1->CONTROLS[0].CnV = PW3;
 	tick++;
 	if (tick % 50 == 0) {
-		if (PW1 == 3000 || PW1 == 6000)  {
+		if (PW3 == 3000 || PW3 == 6000)  {
 			FPTB->PTOR = led_mask[0];
 			FPTB->PSOR = led_mask[1];
 		}
@@ -73,6 +73,8 @@ int main (void) {
 	unsigned char POT2;
 //	char unsigned buffer_gate[buffer_ceil];
 	int uart0_clk_khz;
+	int midpoint;
+
 	
   char keyIn;
 	char welcome[]="Lab 2a\r\nEnter 'p' to print buffer\r\n\0";
@@ -124,7 +126,8 @@ int main (void) {
 	FPTC->PDDR &= ~(1UL<<13);
 	
 	Init_ADC();
-	Init_PWM();
+	Init_PWM_motor();
+  Init_PWM_servo();
 	Init_PIT(10000);																		// count-down period = 100HZ
 	original_CFG2=ADC0 -> CFG2;
 	FPTE->PSOR = 1UL<<21;
@@ -157,11 +160,20 @@ int main (void) {
 	while (1){   //Big while looping
   while (!uart0_getchar_present()) {  //if no input detected, print of data analysis
 		if (DONE==1){
-	  DEBUG_print_track(buffer[0][1-buffer_sel]);
-		DEBUG_print_track(buffer[1][1-buffer_sel]);
-		//DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
-		//DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
-		put("\r\n\r");
+	 // DEBUG_print_track(buffer[0][1-buffer_sel]);
+	//	DEBUG_print_track(buffer[1][1-buffer_sel]);
+//		put("\r\n\r");
+//		DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
+	//	DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
+	//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
+   // translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
+//SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);
+//SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);			
+		midpoint=128+SINGLE_TRACK_ANY(buffer[0][1-buffer_sel])+SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);
+		midpoint=(midpoint>>1)-64;
+		PW3=(int)(((midpoint*3000)>>7)+3000);
+			
+			put("\r\n\r");
 		DONE=0;		
 		}
 			}

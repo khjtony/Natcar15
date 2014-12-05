@@ -1,8 +1,7 @@
 #include <MKL25Z4.H>
 #include "PWM_Kit.h"
 
-
-void Init_PWM(void) {
+void Init_PWM_motor(void) {
 
 // Set up the clock source for MCGPLLCLK/2. 
 // See p. 124 and 195-196 of the KL25 Sub-Family Reference Manual, Rev. 3, Sept 2012
@@ -40,12 +39,20 @@ void Init_PWM(void) {
 	
 	if (TPM0->SC & TPM_CnSC_CHF_MASK) TPM1->SC |= TPM_CnSC_CHF_MASK;
 
-// Enable Interrupts
+// Enable Interrupts	
+	NVIC_SetPriority(TPM0_IRQn, 192); // 0, 64, 128 or 192
+	NVIC_ClearPendingIRQ(TPM0_IRQn); 
+	NVIC_EnableIRQ(TPM0_IRQn);
+}	
 
+void Init_PWM_servo(void) {
+
+// Set up the clock source for MCGPLLCLK/2. 
+// See p. 124 and 195-196 of the KL25 Sub-Family Reference Manual, Rev. 3, Sept 2012
+// TPM clock will be 48.0 MHz if CLOCK_SETUP is 1 in system_MKL25Z4.c.
 	
-
-
-
+	SIM-> SOPT2 |= (SIM_SOPT2_TPMSRC(1) | SIM_SOPT2_PLLFLLSEL_MASK);
+	
 // See p. 207 of the KL25 Sub-Family Reference Manual, Rev. 3, Sept 2012
 	
 	SIM->SCGC6 |= SIM_SCGC6_TPM1_MASK; // Turn on clock to TPM1
@@ -62,7 +69,7 @@ void Init_PWM(void) {
 // Set period and pulse widths
 	
 	TPM1->MOD = 60000-1;		// Freq. = (48 MHz / 16) / 3000 = 1 kHz
-	TPM1->CONTROLS[0].CnV = PW1; 	
+	TPM1->CONTROLS[0].CnV = PW3; 	
 	
 // set TPM1 to up-counter, divide by 16 prescaler and clock mode
 	
@@ -77,7 +84,5 @@ void Init_PWM(void) {
 	NVIC_SetPriority(TPM1_IRQn, 192); // 0, 64, 128 or 192
 	NVIC_ClearPendingIRQ(TPM1_IRQn); 
 	NVIC_EnableIRQ(TPM1_IRQn);	
-	NVIC_SetPriority(TPM0_IRQn, 192); // 0, 64, 128 or 192
-	NVIC_ClearPendingIRQ(TPM0_IRQn); 
-	NVIC_EnableIRQ(TPM0_IRQn);
+
 }	
