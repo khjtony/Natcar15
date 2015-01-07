@@ -98,8 +98,10 @@ int main (void) {
 	PORTC->PCR[2] |= (1UL << 8);												// Pin PTC2 is GPIO
 	FPTC->PDOR |= 1UL<<2;																	// initialize PTC2
 	FPTC->PDDR |= 1UL<<2;
-	FPTC->PDOR |= 1UL<<4;																	// initialize PTC2
+	FPTC->PCOR &= 0UL<<2;
+	FPTC->PDOR |= 1UL<<4;																	// initialize PTC4
 	FPTC->PDDR |= 1UL<<4;
+	FPTC->PCOR &= 0UL<<4;
 	
 	PORTE->PCR[21] = (1UL << 8);												// Pin PTE21 is GPIO
 	FPTE->PDOR |= 1UL<<21;																	// initialize PTE21
@@ -118,6 +120,9 @@ int main (void) {
 	FPTE->PDOR |= 1<<1;																	// initialize PTE1
 	FPTE->PDDR |= 1<<1;			
 
+
+  FPTE->PSOR |= 1UL<<21;
+
 	uart0_clk_khz = (48000000 / 1000); // UART0 clock frequency will equal half the PLL frequency	
 	uart0_init (uart0_clk_khz, TERMINAL_BAUD);// configure PTE1 as output
 	PORTC->PCR[17] |= PORT_PCR_MUX(1);
@@ -129,7 +134,7 @@ int main (void) {
 	Init_PWM_motor();
   Init_PWM_servo();
 	Init_PIT(10000);																		// count-down period = 100HZ
-	FPTE->PSOR = 1UL<<21;
+	
 	
 	//Application start
 	
@@ -139,25 +144,34 @@ int main (void) {
 	while(!(FPTC->PDIR & (1<<17))) {}			// wait for user pressing SW2
 	put("\r\nPlease set motor speed \r\n");
 
-
+  Start_PIT();
+		
+		
 	//ADC conversion and read value
 	while(!(FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
 	POT1 = Read_ADC(0xD);
 	POT2 = Read_ADC(0xC);
 	PW1 = dutyCycle(POT1);
 	PW2 = dutyCycle(POT2);
-		if (POT_COUNT_DOWN<0){
-			put("POT1/PW1:  ");
-			translator(POT1);
+	FB1_sum=FB1_sum+FB1;
+	FB2_sum=FB2_sum+FB2;
+		if (POT_COUNT_DOWN<=0){
+			put("PB1/FB1:  ");
+			//translator(FB1_sum>>13);
+			translator(FB1);
 	    put("/");
 			translator_4(PW1);
 			
-			put("  POT2/PW2:");
-	    translator(POT2);
+			put("  PB2/FB2:");
+	    //translator(FB2_sum>>13);
+			translator(FB2);
 	    put("/");
     	translator_4(PW2);
-			POT_COUNT_DOWN=1000;
+			POT_COUNT_DOWN=8192;
 			put("\r\n");
+			
+			FB1_sum=0;
+			FB2_sum=0;
 		}
 		POT_COUNT_DOWN=POT_COUNT_DOWN-1;
 	//calculate duty cycle
@@ -167,7 +181,7 @@ int main (void) {
 	
 	
 	
-	Start_PIT();
+	
 	
 	while (1){   //Big while looping
   while (!uart0_getchar_present()) {  //if no input detected, print of data analysis
@@ -205,7 +219,6 @@ int main (void) {
 			translator(FB1);
 	    put("  FB1  ");
 	    translator(FB2);
-			put("/");
 			put("  FB2  ");
 			
 			put("\r\nEnter 'c' to continue or 'q'to quit\r\n");

@@ -17,7 +17,7 @@ void Init_PWM_motor(void) {
 // See p. 163 and p. 183-184 of the KL25 Sub-Family Reference Manual, Rev. 3, Sept 2012
 	
 	PORTC->PCR[1] = PORT_PCR_MUX(4); // Configure PTC1 as TPM0_CH0
-	PORTC->PCR[3] = PORT_PCR_MUX(4); // Configure PTC1 as TPM0_CH2
+	PORTC->PCR[3] = PORT_PCR_MUX(4); // Configure PTC3 as TPM0_CH2
 
 // Set channel TPM0_CH0 to edge-aligned, high-true PWM
 	

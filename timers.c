@@ -113,6 +113,10 @@ void ADC0_IRQHandler(void){
 	if (DONE){
 	ADC_FLG=3;
 	ADC_CHa();
+		dummy_time=0;
+		dummy_time=1;
+		dummy_time=0;
+		dummy_time=1;
 	ADC0->SC1[0] = 0x3 |1UL<<6;
 	}
 	
@@ -124,7 +128,6 @@ void ADC0_IRQHandler(void){
 		NVIC_ClearPendingIRQ(ADC0_IRQn);
 	  FB1 = ADC0->R[0];				// read result register
 	  ADC_FLG=7;
-    
 	  ADC0->SC1[0] = 0x7 |1UL<<6;
 		
 	}
@@ -133,6 +136,10 @@ void ADC0_IRQHandler(void){
 	  FB2 = ADC0->R[0];				// read result register
 		ADC_FLG=0;
 		ADC_CHb();
+		dummy_time=0;
+		dummy_time=1;
+		dummy_time=0;
+		dummy_time=1;
 	}
 		
 	

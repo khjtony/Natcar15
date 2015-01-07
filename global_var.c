@@ -19,6 +19,9 @@ char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', '
 volatile unsigned short PW1 = 0;					//set initial value for PW1 and PW2
 volatile unsigned short PW2 = 0;
 volatile unsigned short PW3 = 4500;
+long int FB1_sum=0;
+long int FB2_sum=0;
 char* PW_chars;
-int POT_COUNT_DOWN=1000;
+int POT_COUNT_DOWN=8192;
+int dummy_time=0;
 

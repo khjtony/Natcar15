@@ -25,6 +25,8 @@ extern volatile unsigned short PW2;
 extern volatile unsigned short PW3;
 extern char* PW_chars;
 extern int POT_COUNT_DOWN;
-
+extern int dummy_time;
+extern long int FB1_sum;
+extern long int FB2_sum;
 
 #endif
