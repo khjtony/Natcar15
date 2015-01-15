@@ -498,6 +498,11 @@
               <FileType>1</FileType>
               <FilePath>.\Kit_chain.c</FilePath>
             </File>
+            <File>
+              <FileName>core_algorithm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\core_algorithm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

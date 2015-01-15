@@ -13,14 +13,31 @@
 #include "global_var.h"
 #include "ADC_kit.h"
 #include "Kit_chain.h"
+#include "core_algorithm.h"
 
 #define buffer_ceil 128
 
 
 volatile unsigned int tick = 0;
+unsigned char POT1; 
+unsigned char POT2;
 
 void translator(char keyIn);  //a translator to convert input value to char
 int current_read;
+
+
+
+
+void _zergling(car_control* myCar){
+	return;
+}
+void _nest(car_control* myCar){
+	return;
+}
+
+
+
+
 
 
 
@@ -65,21 +82,15 @@ void TPM0_IRQHandler(void) {
 
 
 	
-/*------------------ ----------------------------------------------------------
+/*-----------------------------------------------------------------------------
   MAIN function
  *----------------------------------------------------------------------------*/
 int main (void) {
-	unsigned char POT1; 
-	unsigned char POT2;
-//	char unsigned buffer_gate[buffer_ceil];
-	int uart0_clk_khz;
-	int midpoint;
-
+	uint8_t next_state=0;
+	car_control myCar;
 	
-  char keyIn;
-	char welcome[]="Lab 2a\r\nEnter 'p' to print buffer\r\n\0";
-//	int slope;
-//	int limit=2;
+	int uart0_clk_khz;
+
 	
 	SIM->SCGC5    |= (SIM_SCGC5_PORTB_MASK
                   |	SIM_SCGC5_PORTC_MASK
@@ -134,20 +145,47 @@ int main (void) {
 	Init_PWM_motor();
   Init_PWM_servo();
 	Init_PIT(10000);																		// count-down period = 100HZ
-	
+	Start_PIT();
 	
 	//Application start
-	
-	
-	
-	put("\r\nPlease press SW2 to start program.\r\n");
-	while(!(FPTC->PDIR & (1<<17))) {}			// wait for user pressing SW2
-	put("\r\nPlease set motor speed \r\n");
+	//Enter state machine
+	while(1){
+		switch (next_state){
+			case 0:
+				Start_PIT();	//PIT only read and update data but not control anything (under change)
+				myCar.direction=90;
+				myCar.left_speed=0;
+				myCar.right_speed=0;
+				//if input is SW1 enter running mode state 1
+				if ((FPTC->PDIR & (1<<13))){
+				next_state=1;
+				}
+				//if input is sw2 enter debug mode state 2
+				if ((FPTC->PDIR & (1<<17))){
+				next_state=2;
+				}
+				break;
+			case 1:
+				_zergling(&myCar);
+				_nest(&myCar);
+				break;
+			case 2:		//debug mode
+				_DEBUG_running();
+				break;
+			default:
+				next_state=0;
+	}
+	}
+}
 
-  Start_PIT();
+
+
+
+void _DEBUG_running(){
+		int midpoint;
+		char keyIn;
 		
-		
-	//ADC conversion and read value
+			//ADC conversion and read value
 	while(!(FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
 	POT1 = Read_ADC(0xD);
 	POT2 = Read_ADC(0xC);
@@ -176,33 +214,23 @@ int main (void) {
 		POT_COUNT_DOWN=POT_COUNT_DOWN-1;
 	//calculate duty cycle
 	}
-	
-	uart0_putchars(welcome);
-	
-	
-	
-	
-	
-	while (1){   //Big while looping
-  while (!uart0_getchar_present()) {  //if no input detected, print of data analysis
+		
 		if (DONE==1){
-	 // DEBUG_print_track(buffer[0][1-buffer_sel]);
-	//	DEBUG_print_track(buffer[1][1-buffer_sel]);
-//		put("\r\n\r");
+		// DEBUG_print_track(buffer[0][1-buffer_sel]);
+		//	DEBUG_print_track(buffer[1][1-buffer_sel]);
+		//		put("\r\n\r");
 		DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
 		DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
-	//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
-   // translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
-//SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);
-//SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);			
+		//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
+		// translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
+		//SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);
+		//SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);			
 		midpoint=128+SINGLE_TRACK_ANY(buffer[0][1-buffer_sel])+SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);
 		midpoint=(midpoint>>1)-64;
 		PW3=(int)(((midpoint*3000)>>7)+3000);
-			
 			put("\r\n\r");
 		DONE=0;		
 		}
-			}
 		if (UART0->D == 'p')  //if user input p, enter menu
 		{
 		  Stop_PIT();
@@ -229,11 +257,8 @@ int main (void) {
     	}
 			if (keyIn == 'c') {
 				Start_PIT();
-				
 				keyIn = 0;
 			}
 		}
 	}
-	
-}
 

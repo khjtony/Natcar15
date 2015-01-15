@@ -20,6 +20,9 @@ unsigned int Read_ADC (int port) {
 	return res;
 }
 
+
+
+
 void ADC_toggle(){
   ADC_sel=13-ADC_sel;
 }

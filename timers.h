@@ -4,6 +4,11 @@
 #include "adc16.h"
 #define LCD_UPDATE_PERIOD (100)
 
+
+#define LED_RED    0
+#define LED_GREEN  1
+#define LED_BLUE	 2
+
 void Init_PIT(unsigned period);
 void Start_PIT(void);
 void Stop_PIT(void);

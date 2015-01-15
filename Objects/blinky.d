@@ -15,3 +15,4 @@
 .\objects\blinky.o: adc0.h
 .\objects\blinky.o: Kit_chain.h
 .\objects\blinky.o: PWM_Kit.h
+.\objects\blinky.o: core_algorithm.h

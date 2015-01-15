@@ -6,6 +6,14 @@
 #define TRACK_ANY_GRP 8
 #define TRACK_ANY_ELE 16
 
+
+
+typedef struct car_control_t{
+	int left_speed;
+	int right_speed;
+	int direction;
+} car_control;
+
 extern const uint32_t led_mask[];
 extern const uint32_t camera_mask[];   //a new mask for camera
 extern char unsigned buffer[2][2][buffer_ceil];
@@ -28,5 +36,8 @@ extern int POT_COUNT_DOWN;
 extern int dummy_time;
 extern long int FB1_sum;
 extern long int FB2_sum;
+extern long int state_machine_timer;
+extern unsigned char POT1;
+extern unsigned char POT2;
 
 #endif

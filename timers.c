@@ -1,20 +1,54 @@
+//this timer file logged handlers
+
 #include "MKL25Z4.h"
 #include "timers.h"
 #include "stdio.h"
 #include "global_var.h"
 #include "Kit_chain.h"
 
+
+
 volatile unsigned PIT_interrupt_counter = 0;
 unsigned char val;
 
 
 
-#define LED_RED    0
-#define LED_GREEN  1
-#define LED_BLUE	 2
 
 
 
+void _pop_camera(){
+		FPTD->PSOR=camera_mask[1];  //Assert SI signal (i.e. set PTD7 high)
+	
+  	//start measuring indicating pin
+	  FPTB->PSOR=1;
+
+	  //clear pending IRQ
+	  NVIC_ClearPendingIRQ(PIT_IRQn);
+	
+	  //wait 20ns
+	
+  	FPTE->PSOR=camera_mask[2];  //Assert CLK signal (i.e. set PTE1 high)
+		
+		
+		// Do ISR work - move next sample from buffer to DAC
+		FPTB->PSOR = 1;							// toggle PTB0
+		
+		
+		
+		//delay 120ns;
+				
+		
+		FPTD->PCOR=camera_mask[1];  //deassert SI signal (i.e. set PTD7 low)
+		
+		//start conversion
+		ADC0->SC1[0] = 0x6 |1UL<<6; 
+		//ADC0->SC1[0] = 0x7 |1UL<<6; 
+		
+		FPTE->PCOR=camera_mask[2];  //deassert CLK signal (i.e. set PTE1 low)
+		
+		
+		//read feedback
+}//update camera data
 
 void buffer_sel_toggle(){
 	buffer_sel=1-buffer_sel;
@@ -141,9 +175,9 @@ void ADC0_IRQHandler(void){
 		dummy_time=0;
 		dummy_time=1;
 	}
-		
 	
 	
+			
 	
 }
 
@@ -170,7 +204,7 @@ void Init_PIT(unsigned period_us) {
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE_MASK;
 
 	//	unsigned char test;
- 	LED_Initialize(); 
+ 	//LED_Initialize(); 
 	
 	Init_ADC_lab2_part1();
 	
@@ -197,45 +231,13 @@ void Stop_PIT(void) {
 
 
 void PIT_IRQHandler() {
-	
-	
-	
 	// check to see which channel triggered interrupt 
 	if (PIT->CHANNEL[0].TFLG & PIT_TFLG_TIF_MASK) {
 		// clear status flag for timer channel 0
 		PIT->CHANNEL[0].TFLG &= PIT_TFLG_TIF_MASK;
 		
-		FPTD->PSOR=camera_mask[1];  //Assert SI signal (i.e. set PTD7 high)
-	
-  	//start measuring indicating pin
-	  FPTB->PSOR=1;
-
-	  //clear pending IRQ
-	  NVIC_ClearPendingIRQ(PIT_IRQn);
-	
-	  //wait 20ns
-	
-  	FPTE->PSOR=camera_mask[2];  //Assert CLK signal (i.e. set PTE1 high)
-		
-		
-		// Do ISR work - move next sample from buffer to DAC
-		FPTB->PSOR = 1;							// toggle PTB0
-		
-		
-		
-		//delay 120ns;
-				
-		
-		FPTD->PCOR=camera_mask[1];  //deassert SI signal (i.e. set PTD7 low)
-		
-		//start conversion
-		ADC0->SC1[0] = 0x6 |1UL<<6; 
-		//ADC0->SC1[0] = 0x7 |1UL<<6; 
-		
-		FPTE->PCOR=camera_mask[2];  //deassert CLK signal (i.e. set PTE1 low)
-		
-		
-		//read feedback
+		//update camera
+		_pop_camera();
 	
 		
 	} else if (PIT->CHANNEL[1].TFLG & PIT_TFLG_TIF_MASK) {
