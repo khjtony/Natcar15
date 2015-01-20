@@ -128,79 +128,7 @@ int SINGLE_TRACK_ANY(char unsigned *buffer){
 
 
 
-/*
-int SINGLE_TRACK_ANY(char unsigned *buffer){
-	int i=0;
-	int j=0;
-	long int max=0;
-	long int min=16*0xff;
-	long int diff;
-	int index_min;
-	int left_bound=0;
-	int right_bound=128;
-	int position;
-	long int bright_avg[TRACK_ANY_ELE];
-	
-	//store all 128 elements in 8 blocks
-	for (i=0;i<TRACK_ANY_GRP;i++){
-		bright_avg[i]=0;
-		for (j=0;j<TRACK_ANY_ELE;j++){
-		  bright_avg[i]=buffer[i*8+j]+bright_avg[i];
-		}
-		j=0;
-	}
-	
-	//find largest value
-	i=0;
-	for (i=0;i<TRACK_ANY_GRP;i++){
-	  if (bright_avg[i]>max){
-			max=bright_avg[i];
-		}
-		if (bright_avg[i]<min){
-			min=bright_avg[i];
-			index_min=i;
-		}
-		diff=max-min;
-		diff=diff>>1;
-		
-		if (index_min>0 || index_min <6){
-			//find left bound
-			if (bright_avg[i-1]<(diff+min)){
-				left_bound=index_min*TRACK_ANY_ELE-(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
-		}
-			else{
-			  left_bound=index_min*TRACK_ANY_ELE-(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
-			}
-			
-			//find right bound
-			if (bright_avg[i+1]<(diff+bright_avg[i])){
-				if(bright_avg[i+2]<(diff+bright_avg[i])){
-				  left_bound=(index_min+1)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
-		    }
-				else{
-				left_bound=(index_min+1)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
-		    }
-			left_bound=(index_min)*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)+(TRACK_ANY_ELE>>2);
-		  }
-			else{
-			  left_bound=index_min*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1)-(TRACK_ANY_ELE>>2);
-			}
-			
-		  position=(right_bound+left_bound)>>1;
-			
-		}
-    else{
-		if (index_min==0){
-		  position=TRACK_ANY_ELE>>1;
-		}
-		else{
-		  position=index_min*TRACK_ANY_ELE+(TRACK_ANY_ELE>>1);
-		}
-		}
-		}
-	return position;
-}
-*/		
+
 
 void translator_4(int keyIn){
 	
@@ -218,6 +146,24 @@ void translator_4(int keyIn){
   uart0_putchar(hex[part4]);
 } 
 
+
+
+int SINGLE_TRACK_SIDE(char unsigned *buffer){
+  int i=0;
+	int threshold=0x40;   
+	int bound;
+	int tempSum=0;
+	
+ 	i=9;
+	for(i=5;i<127-5;i++){
+		tempSum=buffer[i-2]+buffer[i-1]+buffer[i]+buffer[i+1]+buffer[i+2];
+		tempSum=tempSum>>2;
+		if (tempSum>threshold){
+		return i;
+		}
+}
+	return 127;
+}
 
 
 

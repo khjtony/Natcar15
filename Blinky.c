@@ -29,9 +29,25 @@ int current_read;
 
 
 void _zergling(car_control* myCar){
+	int adjust_base;
+	int dead_zone=50;
+	int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+	int right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+	adjust_base=left_track<right_track? left_track:right_track;
+	if(adjust_base<dead_zone && left_track<right_track){
+		PW3=4500+(1500/dead_zone)*(dead_zone-adjust_base);
+	}
+	else{
+		PW3=4500-(1500/dead_zone)*(dead_zone-adjust_base);
+	}
+	myCar->left_speed=5000;
+	myCar->right_speed=5000;
 	return;
 }
 void _nest(car_control* myCar){
+	PW1=myCar->left_speed;
+	PW2=myCar->right_speed;
+	PW3=myCar->direction;
 	return;
 }
 
@@ -88,11 +104,18 @@ void TPM0_IRQHandler(void) {
 int main (void) {
 	uint8_t next_state=0;
 	car_control myCar;
-	
 	int uart0_clk_khz;
+	
+	
+	PW1=0;
+	PW2=0;
+	PW3=4500;
+	
+	
+	
 
 	
-	SIM->SCGC5    |= (SIM_SCGC5_PORTB_MASK
+	SIM->SCGC5  |= (SIM_SCGC5_PORTB_MASK
                   |	SIM_SCGC5_PORTC_MASK
 									| SIM_SCGC5_PORTD_MASK
 	                | SIM_SCGC5_PORTE_MASK);      		// Enable Clock to Port B & D 
@@ -134,12 +157,15 @@ int main (void) {
 
   FPTE->PSOR |= 1UL<<21;
 
+
+
 	uart0_clk_khz = (48000000 / 1000); // UART0 clock frequency will equal half the PLL frequency	
 	uart0_init (uart0_clk_khz, TERMINAL_BAUD);// configure PTE1 as output
 	PORTC->PCR[17] |= PORT_PCR_MUX(1);
 	PORTC->PCR[13] |= PORT_PCR_MUX(1);
 	FPTC->PDDR &= ~(1UL<<17);
 	FPTC->PDDR &= ~(1UL<<13);
+	
 	
 	Init_ADC();
 	Init_PWM_motor();
@@ -149,13 +175,16 @@ int main (void) {
 	
 	//Application start
 	//Enter state machine
+	next_state=0;
 	while(1){
 		switch (next_state){
 			case 0:
 				Start_PIT();	//PIT only read and update data but not control anything (under change)
-				myCar.direction=90;
+				myCar.direction=4500;
 				myCar.left_speed=0;
 				myCar.right_speed=0;
+			  _nest(&myCar);
+			//	puts("Hello World");
 				//if input is SW1 enter running mode state 1
 				if ((FPTC->PDIR & (1<<13))){
 				next_state=1;
@@ -186,7 +215,7 @@ void _DEBUG_running(){
 		char keyIn;
 		
 			//ADC conversion and read value
-	while(!(FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
+	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
 	POT1 = Read_ADC(0xD);
 	POT2 = Read_ADC(0xC);
 	PW1 = dutyCycle(POT1);
@@ -216,19 +245,23 @@ void _DEBUG_running(){
 	}
 		
 		if (DONE==1){
-		// DEBUG_print_track(buffer[0][1-buffer_sel]);
-		//	DEBUG_print_track(buffer[1][1-buffer_sel]);
-		//		put("\r\n\r");
-		DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
-		DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
+		 DEBUG_print_track(buffer[0][1-buffer_sel]);
+		 DEBUG_print_track(buffer[1][1-buffer_sel]);
+		 put("\r\n\r");
+			
+			//int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+	    //int right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+			
+		//DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
+		//DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
 		//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
 		// translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
 		//SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);
 		//SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);			
-		midpoint=128+SINGLE_TRACK_ANY(buffer[0][1-buffer_sel])+SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);
-		midpoint=(midpoint>>1)-64;
-		PW3=(int)(((midpoint*3000)>>7)+3000);
-			put("\r\n\r");
+	//	midpoint=128+SINGLE_TRACK_ANY(buffer[0][1-buffer_sel])+SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);
+	//	midpoint=(midpoint>>1)-64;
+	//	PW3=(int)(((midpoint*3000)>>7)+3000);
+	//		put("\r\n\r");
 		DONE=0;		
 		}
 		if (UART0->D == 'p')  //if user input p, enter menu

@@ -7,7 +7,7 @@
 #include "global_var.h"
 
 
-
+int SINGLE_TRACK_SIDE(char unsigned *buffer);
 unsigned int dutyCycle(char POT);
 void put(char *ptr_str);
 void DEBUG_print_track(char unsigned *buffer);

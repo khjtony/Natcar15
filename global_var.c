@@ -16,9 +16,9 @@ unsigned long FB2=0;
 unsigned int original_CFG2;
 unsigned short ADC_FLG=0;
 char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};  // dictionary for hex transformation
-volatile unsigned short PW1 = 0;					//set initial value for PW1 and PW2
-volatile unsigned short PW2 = 0;
-volatile unsigned short PW3 = 4500;
+volatile unsigned int PW1 = 0;					//set initial value for PW1 and PW2
+volatile unsigned int PW2 = 0;
+volatile unsigned int PW3 = 4500;
 long int FB1_sum=0;
 long int FB2_sum=0;
 char* PW_chars;
