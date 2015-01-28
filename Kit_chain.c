@@ -1,8 +1,5 @@
 #include <MKL25Z4.H>
 #include "Kit_chain.h"
-int left=0;
-int right = 0;
-
 
 void translator(char keyIn){
 	
@@ -27,16 +24,13 @@ unsigned int dutyCycle(char POT) {
 	return PW;
 }
 
-void put(char *ptr_str)  //copied put function
-{
-	while(*ptr_str)
-		uart0_putchar(*ptr_str++);
-}
+
+
 
 
 void DEBUG_print_track(char unsigned *buffer){
-    int max=0;
-	  int min=0xff;
+    int max=0x80;
+	  int min=0x80;
 		int i=0;
 	  int threshold=0;
 		//keyIn=0;   
@@ -67,9 +61,8 @@ void DEBUG_print_camera(char unsigned *buffer){
   int i=0;    
 	for(i=0;i<buffer_ceil;i++){
 		translator(buffer[i]);
-		uart0_putchar(' ');
 	}
-
+		uart0_putchar('\n');
 }
 
 int DEBUG_print_midpoint(char unsigned *buffer){
@@ -150,20 +143,43 @@ void translator_4(int keyIn){
 
 int SINGLE_TRACK_SIDE(char unsigned *buffer){
   int i=0;
-	int threshold=0x40;   
-	int bound;
+	int threshold=0x20;   
+	int bound=0;
 	int tempSum=0;
 	
  	i=9;
 	for(i=5;i<127-5;i++){
 		tempSum=buffer[i-2]+buffer[i-1]+buffer[i]+buffer[i+1]+buffer[i+2];
-		tempSum=tempSum>>2;
+		tempSum=tempSum/5;
 		if (tempSum>threshold){
-		return i;
+			bound++;
+		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 		}
+	return bound;
 }
-	return 127;
-}
 
 
+//void LED_Initialize(void) {
+//  PORTB->PCR[18] = (1UL <<  8);                      /* Pin PTB18 is GPIO */
+//  PORTB->PCR[19] = (1UL <<  8);                      /* Pin PTB19 is GPIO */
+//  PORTD->PCR[1]  = (1UL <<  8);                      /* Pin PTD1  is GPIO */ 
+//	
+//  FPTB->PDOR |= (led_mask[0] | led_mask[1] );          /* switch Red/Green LED off  */
+//  FPTB->PDDR |= (led_mask[0] | led_mask[1]);          /* enable PTB18/19 as Output */
+//
+//  FPTD->PDOR |= led_mask[2];            /* switch Blue LED off  */
+//  FPTD->PDDR |= led_mask[2];            /* enable PTD1 as Output */
+//
+//}
 
+
+int _servo_limit(int input){
+		if (input<6000 && input >3000){
+			return input;
+		}else if(input>6000){
+		return 6000;
+		}
+		else{
+			return 3000;
+		}
+	}

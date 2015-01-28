@@ -1,6 +1,42 @@
 #include <MKL25Z4.H>
 #include "PWM_Kit.h"
 
+void TPM1_IRQHandler(void) {
+//clear pending IRQ
+	NVIC_ClearPendingIRQ(TPM1_IRQn);
+	
+// clear the overflow mask by writing 1 to TOF
+	
+		TPM1->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK;
+		TPM1->CONTROLS[0].CnV = servo_PW;
+//	tick++;
+//	if (tick % 50 == 0) {
+//		if (PW3 == 3000 || PW3 == 6000)  {
+//			FPTB->PTOR = led_mask[0];
+//			FPTB->PSOR = led_mask[1];
+//		}
+//		else {
+//		FPTB->PSOR = led_mask[0];
+//		FPTB->PTOR = led_mask[1];
+//		}		
+//	}
+}
+	
+void TPM0_IRQHandler(void) {
+//clear pending IRQ
+	NVIC_ClearPendingIRQ(TPM0_IRQn);
+	
+// clear the overflow mask by writing 1 to TOF
+// set PW value
+		TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK;
+		TPM0->CONTROLS[0].CnV = left_PW;
+		TPM0->CONTROLS[2].CnSC |= TPM_CnSC_CHF_MASK;
+		TPM0->CONTROLS[2].CnV = right_PW;
+		
+	}
+
+
+
 void Init_PWM_motor(void) {
 
 // Set up the clock source for MCGPLLCLK/2. 
@@ -27,8 +63,8 @@ void Init_PWM_motor(void) {
 // Set period and pulse widths
 	
 	TPM0->MOD = 60000-1;		// Freq. = (48 MHz / 16) / 3000 = 1 kHz
-	TPM0->CONTROLS[0].CnV = PW1; 
-	TPM0->CONTROLS[2].CnV = PW2;
+	TPM0->CONTROLS[0].CnV = left_PW; 
+	TPM0->CONTROLS[2].CnV = right_PW;
 	
 	
 // set TPM0 to up-counter, divide by 16 prescaler and clock mode
@@ -60,7 +96,7 @@ void Init_PWM_servo(void) {
 
 // See p. 163 and p. 183-184 of the KL25 Sub-Family Reference Manual, Rev. 3, Sept 2012
 	
-	PORTB->PCR[0] = PORT_PCR_MUX(3); // Configure PTB1 as TPM1_CH1
+	PORTB->PCR[0] = PORT_PCR_MUX(3); // Configure PTB0 as TPM1_CH0
 
 // Set channel TPM1_CH1 to edge-aligned, high-true PWM
 	
@@ -69,7 +105,7 @@ void Init_PWM_servo(void) {
 // Set period and pulse widths
 	
 	TPM1->MOD = 60000-1;		// Freq. = (48 MHz / 16) / 3000 = 1 kHz
-	TPM1->CONTROLS[0].CnV = PW3; 	
+	TPM1->CONTROLS[0].CnV = servo_PW; 	
 	
 // set TPM1 to up-counter, divide by 16 prescaler and clock mode
 	

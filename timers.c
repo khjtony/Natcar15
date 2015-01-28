@@ -9,184 +9,9 @@
 
 
 volatile unsigned PIT_interrupt_counter = 0;
-unsigned char val;
-
-
-
-
-
-
-void _pop_camera(){
-		FPTD->PSOR=camera_mask[1];  //Assert SI signal (i.e. set PTD7 high)
-	
-  	//start measuring indicating pin
-	  FPTB->PSOR=1;
-
-	  //clear pending IRQ
-	  NVIC_ClearPendingIRQ(PIT_IRQn);
-	
-	  //wait 20ns
-	
-  	FPTE->PSOR=camera_mask[2];  //Assert CLK signal (i.e. set PTE1 high)
-		
-		
-		// Do ISR work - move next sample from buffer to DAC
-		FPTB->PSOR = 1;							// toggle PTB0
-		
-		
-		
-		//delay 120ns;
-				
-		
-		FPTD->PCOR=camera_mask[1];  //deassert SI signal (i.e. set PTD7 low)
-		
-		//start conversion
-		ADC0->SC1[0] = 0x6 |1UL<<6; 
-		//ADC0->SC1[0] = 0x7 |1UL<<6; 
-		
-		FPTE->PCOR=camera_mask[2];  //deassert CLK signal (i.e. set PTE1 low)
-		
-		
-		//read feedback
-}//update camera data
-
-void buffer_sel_toggle(){
-	buffer_sel=1-buffer_sel;
-}
-
-void buffer_cam_toggle(){
-	buffer_cam=1-buffer_cam;
-}
-
-
-char unsigned get_buffer(int i){
-	if (i>=buffer_index){
-		return NULL;
-	}
-	return buffer[buffer_cam][1-buffer_sel][i];
-		
-}
-
-
-
-void LED_Initialize(void) {
-  PORTB->PCR[18] = (1UL <<  8);                      /* Pin PTB18 is GPIO */
-  PORTB->PCR[19] = (1UL <<  8);                      /* Pin PTB19 is GPIO */
-  PORTD->PCR[1]  = (1UL <<  8);                      /* Pin PTD1  is GPIO */ 
-	
-  FPTB->PDOR |= (led_mask[0] | led_mask[1] );          /* switch Red/Green LED off  */
-  FPTB->PDDR |= (led_mask[0] | led_mask[1]);          /* enable PTB18/19 as Output */
-
-  FPTD->PDOR |= led_mask[2];            /* switch Blue LED off  */
-  FPTD->PDDR |= led_mask[2];            /* enable PTD1 as Output */
-
-}
-
-
-
-
-void ADC0_IRQHandler(void){
-	if (ADC_FLG==0){
-	//ADC_1.ASSERT CLK
-	if(buffer_cam){
-		FPTE->PSOR=camera_mask[2];  //assert CLK signal (i.e. set PTE1 high)
-	}
-	
-	//ADC_2.rad value/clear flag
-	NVIC_ClearPendingIRQ(ADC0_IRQn);
-	val = ADC0->R[0];				// read result register
-		
-	
-
-	
-	//ADC_3.store the value from ADC
-
-	if (buffer_index > buffer_ceil-1) {
-	  buffer_index = 0;
-		buffer_sel_toggle();
-		DONE=1;
-	}
-	else{
-	  buffer[buffer_cam][buffer_sel][buffer_index] = val;
-	  buffer_index=buffer_index+buffer_cam;
-		
-		ADC_toggle();
-		
-	//  ADC0->SC1[0] |= AIEN_ON| DIFF_SINGLE | ADC_SC1_ADCH(ADC_sel);  //start conversion on channel SE7b(PTD7)
-		buffer_cam_toggle();
-		
-	  ADC_FLG=0;
-		ADC0->SC1[0] = ADC_sel |1UL<<6; 
-	}
-	//ADC_4.increment CLK counter
-	CLK=CLK+1;
-	
-	
-	
-	
-	
-	//ADC_5.if and else
-	if(buffer_index<buffer_ceil+1){
-		//Delay(120) //ns
-		//startover ADC
-		//start conversion
-		
-		
-	}else{
-	//	DONE=1;
-			
-		//Lower GPIO
-		FPTB->PCOR = 1;
-		CLK=1;
-	}
-	
-	//ADC_6.Deasser CLK
-	FPTE->PCOR=camera_mask[2];  //deassert CLK signal (i.e. set PTE1 low)
-	
-	//toggle ADC port
-	if (DONE){
-	ADC_FLG=3;
-	ADC_CHa();
-		dummy_time=0;
-		dummy_time=1;
-		dummy_time=0;
-		dummy_time=1;
-	ADC0->SC1[0] = 0x3 |1UL<<6;
-	}
-	
-	
-	
-	
-}
-	else if(ADC_FLG==3){
-		NVIC_ClearPendingIRQ(ADC0_IRQn);
-	  FB1 = ADC0->R[0];				// read result register
-	  ADC_FLG=7;
-	  ADC0->SC1[0] = 0x7 |1UL<<6;
-		
-	}
-	else if(ADC_FLG==7){
-		NVIC_ClearPendingIRQ(ADC0_IRQn);
-	  FB2 = ADC0->R[0];				// read result register
-		ADC_FLG=0;
-		ADC_CHb();
-		dummy_time=0;
-		dummy_time=1;
-		dummy_time=0;
-		dummy_time=1;
-	}
-	
-	
-			
-	
-}
-
 
 
 void Init_PIT(unsigned period_us) {
-	
-	
-	
 	// Enable clock to PIT module
 	SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
 	
@@ -206,10 +31,11 @@ void Init_PIT(unsigned period_us) {
 	//	unsigned char test;
  	//LED_Initialize(); 
 	
-	Init_ADC_lab2_part1();
+	Init_ADC();
+	
 	
 	//lower GPIO b0
-	FPTB->PCOR=1; 
+	//FPTB->PCOR=1; 
 	
 	/* Enable Interrupts */
 	NVIC_SetPriority(PIT_IRQn, 128); // 0, 64, 128 or 192
@@ -235,15 +61,226 @@ void PIT_IRQHandler() {
 	if (PIT->CHANNEL[0].TFLG & PIT_TFLG_TIF_MASK) {
 		// clear status flag for timer channel 0
 		PIT->CHANNEL[0].TFLG &= PIT_TFLG_TIF_MASK;
-		
-		//update camera
-		_pop_camera();
 	
+
+	//************************************
+	//	 Clear PIT FLAG
+  //	 PIT
+	//************************************
+	  NVIC_ClearPendingIRQ(PIT_IRQn);
+		
+	//************************************
+	//	 Read cameras
+  //	 camera
+	//************************************
+	
+	_update_camera();
+
+
 		
 	} else if (PIT->CHANNEL[1].TFLG & PIT_TFLG_TIF_MASK) {
 		// clear status flag for timer channel 1
 		PIT->CHANNEL[1].TFLG &= PIT_TFLG_TIF_MASK;
 	} 
+}
+
+
+//*****************************************************************
+//ADC
+//*****************************************************************
+
+
+void _update_camera(){
+	int dummy=0;
+	//************************************
+	//	 Using channel b
+  //	 Camera
+	//************************************
+	ADC0 -> CFG2 |= 1UL<<4;		//using ch_b
+	
+	//************************************
+	//	 Assert SI
+  //	 SI is PTD7 so FPTD->PSOR=7;
+	//************************************
+		FPTD->PSOR=1UL<<7;  //Assert SI signal (i.e. set PTD7 high)
+		
+
+	//************************************
+	//	 Assert CLK signal 
+  //	 CLK is PTE1 so FPTE->PSOR=1;
+	//***********************************
+  	FPTE->PSOR=1UL<<1;  //Assert CLK signal (i.e. set PTE1 high)
+	
+	
+	
+	//************************************
+	//	 Camera reading indicator
+  //	 Camera
+	//***********************************
+	  FPTB->PSOR=1;
+
+	
+	  //wait 20ns
+	
+	
+		
+		
+	//************************************
+	//	 toggle Camera reading Indicator
+  //	 Camera. PTB1
+	//***********************************
+		FPTB->PTOR = 1UL<<1;						
+		
+		//delay 120ns;
+				
+	//************************************
+	//	 deassert SI
+  //	 SI is PTD7 so FPTD->PCOR=7;
+	//************************************
+		FPTD->PCOR=1UL<<7;  //deassert SI signal (i.e. set PTD7 low)
+		
+	//************************************
+	//	 Start to read Camera 
+  //	 Read Camera 0 first to enter ADC handler
+	//************************************
+		ADC_FLG=0;								//read Camera
+		
+		ADC0->SC1[0] = 0x6 |1UL<<6; //start to read Camera 0
+		
+	//************************************
+	//	 Dessert CLK signal 
+  //	 CLK is PTE1 so FPTE->PCOR=1;
+	//***********************************
+  	FPTE->PCOR=1UL<<1;  //Dessert CLK signal (i.e. set PTE1 Low)
+		
+}//update camera data
+
+void _update_wheel(int side){
+	if (side==0){	
+	//************************************
+	//	 Read left Wheel feedback of ADC0_SE7a
+  //	 Wheel A
+	//***********************************
+		ADC_FLG=7;
+		ADC0 -> CFG2 &= 0UL<<4;			//use ch.a
+		ADC0->SC1[0] = 0x7 |1UL<<6;	//read ADC0_SE7a
+		
+
+	}else if(side==1){
+	//************************************
+	//	 Read right Wheel feedback 
+  //	 Wheel
+	//***********************************
+		ADC_FLG=0;
+		ADC0 -> CFG2 &= 0UL<<4;			//use ch.a
+		ADC0->SC1[0] = 0x3 |1UL<<6;	//read ADC0_SE3
+}
+return;
+
+}
+
+
+void ADC0_IRQHandler(void){
+	unsigned char _adc_val;
+	if (ADC_FLG==0){
+	//************************************
+	//	 assert CLK signal after read Camera 1
+  //	 CLK is PTE1 so FPTE->PSOR=1;
+	//***********************************
+	if(buffer_cam){
+		FPTE->PSOR=1UL<<1;  //assert CLK signal (i.e. set PTE1 high)
+	}
+	
+	NVIC_ClearPendingIRQ(ADC0_IRQn);
+	
+	//************************************
+	//	 Read value to val
+  //	 Camera 0/1
+	//***********************************
+	_adc_val = ADC0->R[0];				// read result register
+		
+
+	//************************************
+	//	 Store val to buffer
+  //	 Camera 0/1
+	//***********************************
+	if (buffer_index > (buffer_ceil-1)) {
+
+	//************************************
+	//	 finish to fill both buffer, set Camera_DONE
+  //	 Camera 0/1
+	//***********************************
+	  buffer_index = 0;
+		buffer_sel=1-buffer_sel;
+		Camera_DONE=1;
+	}
+	else{
+		
+	//************************************
+	//	 Store _adc_val to specific buffer
+  //	 Camera 0/1
+	//***********************************
+	  buffer[buffer_cam][buffer_sel][buffer_index] = _adc_val;
+	  buffer_index=buffer_index+buffer_cam;
+		
+		
+	//************************************
+	//	 toggle to read another camera
+  //	 Camera 0/1 Read 6/7 so their summation is 13
+	//***********************************
+		 ADC_sel=13-ADC_sel;
+		 buffer_cam=1-buffer_cam;
+		
+	//************************************
+	//	 start to read another camera
+  //	 Camera 0/1 Read 6/7 so their summation is 13
+	//***********************************
+		ADC0->SC1[0] = ADC_sel |1UL<<6; 
+	}
+	//ADC_4.increment CLK counter
+	CLK=CLK+1;
+
+	//************************************
+	//	 Dessert CLK signal 
+  //	 CLK is PTE1 so FPTE->PCOR=1;
+	//***********************************
+	FPTE->PCOR=1UL<<1;  //deassert CLK signal (i.e. set PTE1 low)
+
+
+	/*
+	//toggle ADC port
+	if (Camera_DONE){
+	// ************************************
+	//	 Read left_FB
+  //	 Wheel
+	// ************************************
+	_update_wheel(0);
+	// ************************************
+	//	 Read right_FB
+  //	 Wheel
+	// ************************************
+	_update_wheel(1);
+		
+		
+
+	}
+	
+}
+	else if(ADC_FLG==3){
+		//Wheel B
+		NVIC_ClearPendingIRQ(ADC0_IRQn);
+	  right_fb = ADC0->R[0];				// read result register
+		return;
+	}
+	else if(ADC_FLG==7){
+		NVIC_ClearPendingIRQ(ADC0_IRQn);
+	  left_fb = ADC0->R[0];				// read result register
+		return;
+	}
+	
+}
+	*/}
+	
 }
 
 // *******************************ARM University Program Copyright © ARM Ltd 2013*************************************   

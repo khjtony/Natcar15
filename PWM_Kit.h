@@ -6,9 +6,8 @@
 #include <stdio.h>
 
 void Init_PWM_motor(void);
-
 void Init_PWM_servo(void);
-
-
+void TPM0_IRQHandler(void);
+void TPM1_IRQHandler(void);
 
 #endif
