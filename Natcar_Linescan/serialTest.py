@@ -5,7 +5,7 @@ import matplotlib.animation as animation
 import serial
 from struct import unpack
 # port = raw_input("Please Input COM: ")
-car = serial.Serial('COM5', 115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, timeout=1)
+car = serial.Serial('COM10', 115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, timeout=1)
 count=0
 new_line=np.zeros(128)
 

@@ -18,10 +18,12 @@ int SINGLE_TRACK_SIDE(char unsigned *buffer);
 unsigned int dutyCycle(char POT);
 void DEBUG_print_track(char unsigned *buffer);
 void DEBUG_print_camera(char unsigned *buffer);
+void DEBUG_print_double_camera(char unsigned *buffer1,char unsigned *buffer2);
 int SINGLE_TRACK_ANY(char unsigned *buffer);
 int DEBUG_print_midpoint(char unsigned *buffer);
 void translator_4(int keyIn);
 void _DEBUG_running(void);
 int _servo_limit(int input);
+int _motor_limit(int,int);
 
 #endif

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Natcar_Linescan.iml" filepath="$PROJECT_DIR$/.idea/Natcar_Linescan.iml" />
+      <module fileurl="file://D:/command_X/.idea/command_X.iml" filepath="D:/command_X/.idea/command_X.iml" />
     </modules>
   </component>
 </project>

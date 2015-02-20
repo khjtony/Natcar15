@@ -557,11 +557,11 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --cpu=Cortex-M0+ --apcs=interwork --depend=.\objec
 ts\startup_mkl25z4.d -o.\objects\startup_mkl25z4.o -ID:\workspace\Natcar\RTE -I
-C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\Ki
-netis_KLxx_DFP\1.4.0\Device\Include --predefine="__EVAL SETA 1" --predefine="__
-MICROLIB SETA 1" --predefine="_RTE_ SETA 1" --predefine="MKL25Z128xxx4 SETA 1" 
---list=.\listings\startup_mkl25z4.lst RTE\Device\MKL25Z128xxx4\startup_MKL25Z4.
-s
+D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include -ID:\Software\KEIL\ARM\
+PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include --predefine="__EVAL SETA 1" --p
+redefine="__MICROLIB SETA 1" --predefine="_RTE_ SETA 1" --predefine="MKL25Z128x
+xx4 SETA 1" --list=.\listings\startup_mkl25z4.lst RTE\Device\MKL25Z128xxx4\star
+tup_MKL25Z4.s
 
 
 

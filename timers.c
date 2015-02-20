@@ -247,7 +247,7 @@ void ADC0_IRQHandler(void){
 	FPTE->PCOR=1UL<<1;  //deassert CLK signal (i.e. set PTE1 low)
 
 
-	/*
+/*	
 	//toggle ADC port
 	if (Camera_DONE){
 	// ************************************
@@ -264,6 +264,7 @@ void ADC0_IRQHandler(void){
 		
 
 	}
+	*/
 	
 }
 	else if(ADC_FLG==3){
@@ -279,8 +280,7 @@ void ADC0_IRQHandler(void){
 	}
 	
 }
-	*/}
 	
-}
+
 
 // *******************************ARM University Program Copyright © ARM Ltd 2013*************************************   

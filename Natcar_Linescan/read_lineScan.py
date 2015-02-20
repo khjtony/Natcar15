@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import serial
+import Queue
 from struct import unpack
 
 
@@ -15,7 +16,7 @@ xdata = range(1, 129)
 line, = ax.plot([], [], 'ro')
 line.set_xdata(xdata)
 # port = raw_input("Please Input COM: ")
-port = 'com5'
+port = 'com10'
 car = serial.Serial(port.upper(), 115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, timeout=1)
 one_line=np.zeros(128)
 # initialization function: plot the background of each frame
@@ -27,8 +28,11 @@ def init():
 
 
 def scan_line(gate):
+    start_check=Queue(3)
     while (True):
+
         item = car.read()
+
         if (item=='\n'):
             continue
         else:
@@ -38,7 +42,6 @@ def scan_line(gate):
               one_line[i]=((ord(car.read())-ord('0'))*16)
               one_line[i]+=ord(car.read())-ord('0')
             # print line
-            car.flushInput()
             return one_line
 
 

@@ -41,8 +41,14 @@ int main (void) {
 	int uart0_clk_khz;
 	int left_track;
 	int right_track;
-	int left_ratio=30;
-	int right_ratio=30;
+	int left_ratio=20;
+	int right_ratio=25;
+	int middle_point=-20;
+	int acc_flag=1;
+	int turn_flag=0;
+	int acc_count=0;
+	int turning_high=25000;
+	int turning_low=15000;
 	SIM->SCGC5  |= (SIM_SCGC5_PORTA_MASK
 									| SIM_SCGC5_PORTB_MASK
                   |	SIM_SCGC5_PORTC_MASK
@@ -183,6 +189,7 @@ int main (void) {
 
 	left_PW=60000;
 	right_PW=0;
+	
 
 	while(1){
 		switch (next_state){
@@ -191,6 +198,8 @@ int main (void) {
 				//if input is SW1 enter running mode state 1
 				if ((FPTC->PDIR & (1<<13))){
 					put("Racing Mode\r\n");
+					left_PW=35000;
+					right_PW=25000;
 					next_state=1;
 					break;
 				}
@@ -201,29 +210,74 @@ int main (void) {
 					break;
 				}
 				break;
-			case 1:;
-				left_PW=42000;
-				right_PW=10000;
+			case 1:
+			// 	put("CASE 1");
 				
+			//mid point cali
+				middle_point=0;
+			
+			//read cameras
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-	      right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-						
-				if(left_track<100){
-					servo_PW=_servo_limit(4500+(110-left_track)*left_ratio);
-					left_PW=38000;
-					right_PW=8000;
-				}else if(right_track<100){
-					servo_PW=_servo_limit(4500-(110-right_track)*right_ratio);
-					left_PW=40000;
-					right_PW=18000;
-				}else{
-					servo_PW=_servo_limit(4500);
-					left_PW=42000;
-					right_PW=10000;
+				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
+			//setup dead zone
+			if(turn_flag){
+				left_track=left_track>10?left_track-10:0;
+	      right_track=right_track>10?right_track-10:0;
+			}
+			else{
+				left_track=left_track>15?left_track-15:0;
+	      right_track=right_track>15?right_track-15:0;
+			}
+			
+			//Series of checking
+			//out of track STOP!
+				if (left_track>90 && right_track>90){
+					left_PW=60000;
+					right_PW=0;
+				//	put("STOP!");
+					continue;
+				}
+				
+			//accel
+				if (left_track<20 && right_track<20){
+						left_PW = _motor_limit(left_PW-2,0);
+						right_PW = _motor_limit(right_PW+2,1);
+						turn_flag=0;
+				}else{
+						//turn_flag=1;
 				}
 			
+			//where is middle point
+				middle_point=middle_point+right_track-left_track;
+			
+			//turning front wheels
+			  servo_PW=_servo_limit(4500-(middle_point)*20);
+				
+			//change rear wheel speed
+				left_PW=_motor_limit(35000-90*middle_point,0);
+				right_PW=_motor_limit(25000-90*middle_point,1);
+				
+				
+				//if(left_track<70){
+			//		servo_PW=_servo_limit(4500+(70-left_track)*left_ratio);
+			//		left_PW=35000-100*(70-left_track);
+				//	right_PW=10000;
+			//		continue;
+		//		}else if(right_track<90){
+			//		servo_PW=_servo_limit(4500-(90-right_track)*right_ratio);
+		//			left_PW=43000-30*(90-right_track);
+			//		right_PW=15000+100*(90-right_track);
+			//		continue;
+		//		}else{
+		//			servo_PW=_servo_limit(4500);
+		//			left_PW=38000;
+	//				right_PW=12000;
+	//				continue;				
+	//			}
+			
 				//analyze and control car
+				next_state = 1;
 				break;
 			case 2:		//debug mode
 				_DEBUG_running();
@@ -240,6 +294,8 @@ int main (void) {
 void _DEBUG_running(){
 		int midpoint;
 		char keyIn;
+		//left_PW=55000;
+		//right_PW=5000;
 /*		
 			//ADC conversion and read value
 	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
@@ -274,9 +330,12 @@ void _DEBUG_running(){
 
 		if (Camera_DONE==1){
 		 //DEBUG_print_track(buffer[0][1-buffer_sel]);
-		// DEBUG_print_track(buffer[1][1-buffer_sel]);
-			DEBUG_print_camera(buffer[1][1-buffer_sel]);
-		 put("\n");
+		 //DEBUG_print_track(buffer[1][1-buffer_sel]);
+			//put("\r\n");
+		 //DEBUG_print_double_camera(buffer[0][1-buffer_sel],buffer[1][1-buffer_sel]);
+		uart0_putchar(0x00);
+		DEBUG_print_camera(buffer[0][1-buffer_sel]);
+		//DEBUG_print_camera(buffer[1][1-buffer_sel]);
 			
 			//int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 	    //int right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);

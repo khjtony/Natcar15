@@ -57,13 +57,37 @@ void DEBUG_print_track(char unsigned *buffer){
 		}	
 }
 
+void DEBUG_print_double_camera(char unsigned *buffer1,char unsigned *buffer2)
+{
+	int i=0;    
+	uart0_putchar(0xff);
+	uart0_putchar(0x00);
+	uart0_putchar(0xff);  //start sign
+  for(i=0;i<buffer_ceil;i++){
+		uart0_putchar(buffer1[i]);
+	}
+	i=0;
+	for(i=0;i<buffer_ceil;i++){
+		uart0_putchar(buffer2[i]);
+	}
+}
+
 void DEBUG_print_camera(char unsigned *buffer){
   int i=0;    
-	for(i=0;i<buffer_ceil;i++){
-		translator(buffer[i]);
+	//uart0_putchar(0xff);
+	//uart0_putchar(0x00);
+	//uart0_putchar(0xff);  //start sign
+  for(i=0;i<buffer_ceil;i++){
+		if (buffer[i]==0x00){
+			uart0_putchar(0x01);
+			//translator(0x01);
+		}else{
+			uart0_putchar(buffer[i]);
+	//		translator(buffer[i]);
 	}
-		uart0_putchar('\n');
+		
 }
+	}
 
 int DEBUG_print_midpoint(char unsigned *buffer){
   int midpoint=SINGLE_TRACK_ANY(buffer);
@@ -143,18 +167,19 @@ void translator_4(int keyIn){
 
 int SINGLE_TRACK_SIDE(char unsigned *buffer){
   int i=0;
-	int threshold=0x20;   
+	int threshold=0x30;
 	int bound=0;
 	int tempSum=0;
 	
  	i=9;
 	for(i=5;i<127-5;i++){
-		tempSum=buffer[i-2]+buffer[i-1]+buffer[i]+buffer[i+1]+buffer[i+2];
-		tempSum=tempSum/5;
-		if (tempSum>threshold){
+		//tempSum=buffer[i-1]+buffer[i]+buffer[i+1];
+		//tempSum=tempSum/3;
+		tempSum=buffer[i];
+		if (tempSum<threshold){
 			bound++;
 		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-		}
+	}
 	return bound;
 }
 
@@ -171,6 +196,29 @@ int SINGLE_TRACK_SIDE(char unsigned *buffer){
 //  FPTD->PDDR |= led_mask[2];            /* enable PTD1 as Output */
 //
 //}
+
+int _motor_limit(int input,int option){
+	if (option==0){
+		if (input<60000 && input >30000){
+			return input;
+		}else if(input>60000){
+		return 60000;
+		}
+		else{
+			return 30000;
+		}
+	}
+	else{
+		if (input<30000 && input >0){
+			return input;
+		}else if(input>30000){
+		return 30000;
+		}
+		else{
+			return 0;
+		}
+	}
+}
 
 
 int _servo_limit(int input){
