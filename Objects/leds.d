@@ -1,0 +1,9 @@
+.\objects\leds.o: accel\LEDs.c
+.\objects\leds.o: D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H
+.\objects\leds.o: D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h
+.\objects\leds.o: D:\Software\KEIL\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\leds.o: D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h
+.\objects\leds.o: D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h
+.\objects\leds.o: D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h
+.\objects\leds.o: accel\LEDs.h
+.\objects\leds.o: accel\gpio_defs.h

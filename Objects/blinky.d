@@ -16,3 +16,9 @@
 .\objects\blinky.o: Kit_chain.h
 .\objects\blinky.o: PWM_Kit.h
 .\objects\blinky.o: core_algorithm.h
+.\objects\blinky.o: D:\Software\KEIL\ARM\ARMCC\Bin\..\include\math.h
+.\objects\blinky.o: ./accel/GPIO_defs.h
+.\objects\blinky.o: ./accel/LEDs.h
+.\objects\blinky.o: ./accel/i2c.h
+.\objects\blinky.o: ./accel/mma8451.h
+.\objects\blinky.o: ./accel/delay.h

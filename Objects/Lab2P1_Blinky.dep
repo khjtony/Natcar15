@@ -16,7 +16,7 @@ I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53F
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
 I (adc16.h)(0x545D26B4)
-F (.\Blinky.c)(0x54F36550)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\blinky.o --omf_browse .\objects\blinky.crf --depend .\objects\blinky.d)
+F (.\Blinky.c)(0x54F37DCC)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\blinky.o --omf_browse .\objects\blinky.crf --depend .\objects\blinky.d)
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516878CE)
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
 I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
@@ -34,6 +34,12 @@ I (adc0.h)(0x54BDE91D)
 I (Kit_chain.h)(0x54F357B1)
 I (PWM_Kit.h)(0x54BE116C)
 I (core_algorithm.h)(0x54BDE91D)
+I (D:\Software\KEIL\ARM\ARMCC\include\math.h)(0x541A706A)
+I (./accel/GPIO_defs.h)(0x5103C058)
+I (./accel/LEDs.h)(0x516981BC)
+I (./accel/i2c.h)(0x51851D4A)
+I (./accel/mma8451.h)(0x5184F85E)
+I (./accel/delay.h)(0x51725660)
 F (.\timers.c)(0x54D26977)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\timers.o --omf_browse .\objects\timers.crf --depend .\objects\timers.d)
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.h)(0x516878CE)
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
@@ -123,6 +129,46 @@ I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53FFC59A)
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
+F (.\accel\delay.c)(0x517187D6)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\delay.o --omf_browse .\objects\delay.crf --depend .\objects\delay.d)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516878CE)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
+I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
+F (.\accel\i2c.c)(0x51860A50)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\i2c.o --omf_browse .\objects\i2c.crf --depend .\objects\i2c.d)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516878CE)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
+I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
+I (accel\i2c.h)(0x51851D4A)
+F (.\accel\LEDs.c)(0x515FDB70)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\leds.o --omf_browse .\objects\leds.crf --depend .\objects\leds.d)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516878CE)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
+I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
+I (accel\LEDs.h)(0x516981BC)
+I (accel\gpio_defs.h)(0x5103C058)
+F (.\accel\mma8451.c)(0x51850F2A)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\mma8451.o --omf_browse .\objects\mma8451.crf --depend .\objects\mma8451.d)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516878CE)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD04CA)
+I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFC59A)
+I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516878CE)
+I (accel\mma8451.h)(0x5184F85E)
+I (accel\i2c.h)(0x51851D4A)
+I (accel\delay.h)(0x51725660)
+I (D:\Software\KEIL\ARM\ARMCC\include\math.h)(0x541A706A)
+F (.\accel\delay.h)(0x51725660)()
+F (.\accel\GPIO_defs.h)(0x5103C058)()
+F (.\accel\i2c.h)(0x51851D4A)()
+F (.\accel\LEDs.h)(0x516981BC)()
+F (.\accel\mma8451.h)(0x5184F85E)()
 F (RTE\Device\MKL25Z128xxx4\startup_MKL25Z4.s)(0x546FB8BD)(--cpu Cortex-M0+ --pd "__EVAL SETA 1" -g --apcs=interwork --pd "__MICROLIB SETA 1"-I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include--pd "_RTE_ SETA 1" --pd "MKL25Z128xxx4 SETA 1"--list .\listings\startup_mkl25z4.lst --xref -o .\objects\startup_mkl25z4.o --depend .\objects\startup_mkl25z4.d)
 F (RTE\Device\MKL25Z128xxx4\system_MKL25Z4.c)(0x545D26FF)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\system_mkl25z4.o --omf_browse .\objects\system_mkl25z4.crf --depend .\objects\system_mkl25z4.d)
 I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A706A)

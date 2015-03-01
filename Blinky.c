@@ -14,6 +14,13 @@
 #include "ADC_kit.h"
 #include "Kit_chain.h"
 #include "core_algorithm.h"
+#include <math.h>
+#include "./accel/GPIO_defs.h"
+#include "./accel/LEDs.h"
+#include "./accel/i2c.h"
+#include "./accel/mma8451.h"
+#include "./accel/delay.h"
+
 
 #define buffer_ceil 128
 
@@ -168,6 +175,15 @@ int main (void) {
 	FPTC->PDDR &= ~(1UL<<17);
 	FPTC->PDDR &= ~(1UL<<13);
 	
+	//
+
+
+
+
+
+//
+	
+	
 	
 	//************************************
 	//	 Initialize
@@ -179,6 +195,8 @@ int main (void) {
 	Init_PIT(12000);																		// count-down period = 100HZ
 	Init_PWM_motor();
   Init_PWM_servo();
+	i2c_init();																/* init i2c	*/
+	init_mma(); 												/* init mma peripheral */
 	Start_PIT();
 	
 	
@@ -212,7 +230,8 @@ int main (void) {
 				break;
 			case 1:
 			// 	put("CASE 1");
-				
+				read_full_xyz();
+				convert_xyz_to_roll_pitch();
 			//mid point cali
 				middle_point=0;
 			
@@ -222,8 +241,8 @@ int main (void) {
 				
 			//setup dead zone
 			//if(turn_flag){
-				left_track=left_track>15?left_track-10:0;
-	      right_track=right_track>15?right_track-10:0;
+				left_track=left_track>15?left_track-15:0;
+	      right_track=right_track>15?right_track-15:0;
 			//}
 			//else{
 				//left_track=left_track>10?left_track-10:0;
@@ -243,11 +262,17 @@ int main (void) {
 							//where is middle point
 				middle_point=middle_point+right_track-left_track;
 				
+			//hill!!
+				if (fabs(pitch) > 30){
+					left_PW = 40000;
+					right_PW = 20000;
+					continue;
+				}
+				
 			//accel
 				if (left_track<20 && right_track<20){
 						left_PW = _motor_limit(left_PW-1,0);
 						right_PW = _motor_limit(right_PW+1,1);
-						turn_flag=0;
 				}else{
 				}
 			

@@ -9,6 +9,10 @@
 ".\objects\pwm_kit.o"
 ".\objects\kit_chain.o"
 ".\objects\core_algorithm.o"
+".\objects\delay.o"
+".\objects\i2c.o"
+".\objects\leds.o"
+".\objects\mma8451.o"
 ".\objects\startup_mkl25z4.o"
 ".\objects\system_mkl25z4.o"
 --library_type=microlib --ro-base 0x00000000 --entry 0x00000000 --rw-base 0x1FFFF000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --xref --callgraph --symbols
