@@ -244,8 +244,6 @@ int main (void) {
 				
 			//setup dead zone
 
-				left_track=left_track>13?left_track-13:0;
-	      right_track=right_track>13?right_track-13:0;
 		
 			//Series of checking
 			//out of track STOP!
@@ -269,28 +267,29 @@ int main (void) {
 					continue;
 				}
 
-				if (middle_point==0){
-					if(turn_flag){
-							turn_flag=0;
-							left_PW = 30000;
-							right_PW = 30000;
-							}
-						else{
-						left_PW = _motor_limit(left_PW-2,0);
-						right_PW = _motor_limit(right_PW+2,1);
-						}
+				if (middle_point<15 && middle_point>-15){
+					servo_PW=_servo_limit(4500-(middle_point)*5);
+				//	if(turn_flag){
+					//		turn_flag=0;
+						//	left_PW = 25000;
+							//right_PW = 35000;
+							//}
+					//	else{
+						left_PW = _motor_limit(left_PW-3,0);
+						right_PW = _motor_limit(right_PW+3,1);
+						//}
 				}
-			 else	if (middle_point<40){
+			 else	if (middle_point<40 && middle_point>-40){
 				  turn_flag=1;
 					servo_PW=_servo_limit(4500-(middle_point)*25);
-					left_PW=_motor_limit(30000-40*middle_point,0);
-				  right_PW=_motor_limit(30000-40*middle_point,1);
+				  left_PW = 25000;
+					right_PW = 35000;
 				}
 				else{
 					turn_flag=1;
 					servo_PW=_servo_limit(4500-25*40*(middle_point < 0? -1:1)-(middle_point-40)*90);
-					left_PW=_motor_limit(30000-90*middle_point,0);
-					right_PW=_motor_limit(30000-90*middle_point,1);
+					left_PW = 25000;
+					right_PW = 35000;
 				}
 			
 				//analyze and control car
@@ -311,8 +310,8 @@ int main (void) {
 void _DEBUG_running(){
 		int midpoint;
 		char keyIn;
-		left_PW=10000;
-		right_PW=50000;
+		//left_PW=10000;
+	//	right_PW=50000;
 /*		
 			//ADC conversion and read value
 	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
@@ -346,12 +345,12 @@ void _DEBUG_running(){
 */
 
 		if (Camera_DONE==1){
-		 //DEBUG_print_track(buffer[0][1-buffer_sel]);
-		 //DEBUG_print_track(buffer[1][1-buffer_sel]);
-			//put("\r\n");
+		 DEBUG_print_track(buffer[0][1-buffer_sel]);
+		 DEBUG_print_track(buffer[1][1-buffer_sel]);
+			put("\r\n");
 		 //DEBUG_print_double_camera(buffer[0][1-buffer_sel],buffer[1][1-buffer_sel]);
-		uart0_putchar(0x00);
-		DEBUG_print_camera(buffer[0][1-buffer_sel]);
+		//uart0_putchar(0x00);
+		//DEBUG_print_camera(buffer[0][1-buffer_sel]);
 		//DEBUG_print_camera(buffer[1][1-buffer_sel]);
 			
 			//int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);

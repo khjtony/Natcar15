@@ -28,7 +28,7 @@ unsigned int dutyCycle(char POT) {
 
 
 
-void DEBUG_print_track(char unsigned *buffer){
+void DEBUG_print_track(volatile char unsigned *buffer){
     int max=0x80;
 	  int min=0x80;
 		int i=0;
@@ -167,7 +167,7 @@ void translator_4(int keyIn){
 
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
   int i=0;
-	int threshold=0x30;
+	int threshold=0x50;
 	int bound=0;
 	int tempSum=0;
 	
