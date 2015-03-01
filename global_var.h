@@ -14,17 +14,17 @@ typedef struct car_control_t{
 	int direction;
 } car_control;
 
-extern char unsigned buffer[2][2][buffer_ceil];
-extern int unsigned buffer_index;
-extern int buffer_sel;
-extern int buffer_cam;
+extern volatile char unsigned buffer[2][2][buffer_ceil];
+extern volatile int unsigned buffer_index;
+extern volatile int buffer_sel;
+extern volatile int buffer_cam;
 extern int CLK;
-extern int Camera_DONE;
+extern volatile int Camera_DONE;
 extern int ADC_sel;
-extern unsigned long left_fb;
-extern unsigned long right_fb;
+extern volatile unsigned long left_fb;
+extern volatile unsigned long right_fb;
 
-extern unsigned short ADC_FLG;
+extern volatile unsigned short ADC_FLG;
 extern char hex[];
 extern volatile unsigned int left_PW;					//set initial value for PW1 and PW2
 extern volatile unsigned int right_PW;

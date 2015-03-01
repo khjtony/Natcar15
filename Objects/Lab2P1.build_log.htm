@@ -35,17 +35,21 @@ Blinky.c(45): warning:  #177-D: variable "right_ratio" was declared but never re
         int right_ratio=25;
 Blinky.c(47): warning:  #177-D: variable "acc_flag" was declared but never referenced
         int acc_flag=1;
+Blinky.c(48): warning:  #550-D: variable "turn_flag" was set but never used
+        int turn_flag=0;
 Blinky.c(49): warning:  #177-D: variable "acc_count" was declared but never referenced
         int acc_count=0;
 Blinky.c(50): warning:  #177-D: variable "turning_high" was declared but never referenced
         int turning_high=25000;
 Blinky.c(51): warning:  #177-D: variable "turning_low" was declared but never referenced
         int turning_low=15000;
-Blinky.c(295): warning:  #177-D: variable "midpoint" was declared but never referenced
+Blinky.c(347): warning:  #167-D: argument of type "volatile unsigned char *" is incompatible with parameter of type "unsigned char *"
+                DEBUG_print_camera(buffer[0][1-buffer_sel]);
+Blinky.c(305): warning:  #177-D: variable "midpoint" was declared but never referenced
                 int midpoint;
-Blinky.c(296): warning:  #177-D: variable "keyIn" was declared but never referenced
+Blinky.c(306): warning:  #177-D: variable "keyIn" was declared but never referenced
                 char keyIn;
-Blinky.c: 8 warnings, 0 errors
+Blinky.c: 10 warnings, 0 errors
 compiling timers.c...
 timers.c(94): warning:  #177-D: variable "dummy" was declared but never referenced
         int dummy=0;
@@ -59,8 +63,8 @@ compiling core_algorithm.c...
 assembling startup_MKL25Z4.s...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=4820 RO-data=224 RW-data=88 ZI-data=1536  
-".\Objects\Lab2P1.axf" - 0 Error(s), 9 Warning(s).
+Program Size: Code=4832 RO-data=224 RW-data=88 ZI-data=1536  
+".\Objects\Lab2P1.axf" - 0 Error(s), 11 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -90,6 +94,4 @@ Package Vendor: Keil
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-</pre>
-</body>
-</html>
+Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 

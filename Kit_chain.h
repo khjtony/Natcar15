@@ -14,7 +14,7 @@
 #define LED_BLUE	 2
 
 
-int SINGLE_TRACK_SIDE(char unsigned *buffer);
+int SINGLE_TRACK_SIDE(volatile char unsigned *buffer);
 unsigned int dutyCycle(char POT);
 void DEBUG_print_track(char unsigned *buffer);
 void DEBUG_print_camera(char unsigned *buffer);

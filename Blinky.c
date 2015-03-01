@@ -176,7 +176,7 @@ int main (void) {
 	right_PW=0;
 	left_PW=0;
 	servo_PW=4500;
-	Init_PIT(10000);																		// count-down period = 100HZ
+	Init_PIT(12000);																		// count-down period = 100HZ
 	Init_PWM_motor();
   Init_PWM_servo();
 	Start_PIT();
@@ -221,42 +221,52 @@ int main (void) {
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
 			//setup dead zone
-			if(turn_flag){
-				left_track=left_track>10?left_track-10:0;
-	      right_track=right_track>10?right_track-10:0;
-			}
-			else{
-				left_track=left_track>15?left_track-15:0;
-	      right_track=right_track>15?right_track-15:0;
-			}
+			//if(turn_flag){
+				left_track=left_track>15?left_track-10:0;
+	      right_track=right_track>15?right_track-10:0;
+			//}
+			//else{
+				//left_track=left_track>10?left_track-10:0;
+	      //right_track=right_track>10?right_track-10:0;
+			//}
 			
 			//Series of checking
 			//out of track STOP!
-				if (left_track>90 && right_track>90){
+				if (left_track>100 && right_track>100){
 					left_PW=60000;
 					right_PW=0;
 				//	put("STOP!");
 					continue;
 				}
 				
+				
+							//where is middle point
+				middle_point=middle_point+right_track-left_track;
+				
 			//accel
 				if (left_track<20 && right_track<20){
-						left_PW = _motor_limit(left_PW-2,0);
-						right_PW = _motor_limit(right_PW+2,1);
+						left_PW = _motor_limit(left_PW-1,0);
+						right_PW = _motor_limit(right_PW+1,1);
 						turn_flag=0;
 				}else{
-						//turn_flag=1;
 				}
 			
-			//where is middle point
-				middle_point=middle_point+right_track-left_track;
+
 			
 			//turning front wheels
-			  servo_PW=_servo_limit(4500-(middle_point)*20);
-				
+			 // servo_PW=_servo_limit(4500-(middle_point)*(middle_point)*10*1/10*(middle_point<0? -1:1));
+				if (middle_point<40){
+					servo_PW=_servo_limit(4500-(middle_point)*25);
+				}
+				else{
+					servo_PW=_servo_limit(4500-25*40*(middle_point < 0? -1:1)-(middle_point)*60);
+				}
+				//servo_PW=_servo_limit(4500-(middle_point)*25);
 			//change rear wheel speed
 				left_PW=_motor_limit(35000-90*middle_point,0);
 				right_PW=_motor_limit(25000-90*middle_point,1);
+				//left_PW=35000;
+				//right_PW=25000;
 				
 				
 				//if(left_track<70){

@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\Objects\Lab2P1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Lab2P1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050041: Last Updated: Fri Feb 13 16:53:33 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050041: Last Updated: Sun Mar 01 11:15:31 2015
 <BR><P>
-<H3>Maximum Stack Usage =         76 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =         68 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 main &rArr; uart0_init &rArr; __aeabi_uidivmod
 <P>
@@ -279,8 +279,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[26]"></a>main</STRONG> (Thumb, 852 bytes, Stack size 16 bytes, blinky.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = main &rArr; uart0_init &rArr; __aeabi_uidivmod
+<P><STRONG><a name="[26]"></a>main</STRONG> (Thumb, 852 bytes, Stack size 8 bytes, blinky.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = main &rArr; uart0_init &rArr; __aeabi_uidivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart0_init
 <LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_servo_limit
@@ -434,7 +434,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[3c]"></a>_motor_limit</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, kit_chain.o(.text))
+<P><STRONG><a name="[3c]"></a>_motor_limit</STRONG> (Thumb, 62 bytes, Stack size 0 bytes, kit_chain.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
