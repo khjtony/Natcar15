@@ -35,21 +35,19 @@ Blinky.c(52): warning:  #177-D: variable "right_ratio" was declared but never re
         int right_ratio=25;
 Blinky.c(54): warning:  #177-D: variable "acc_flag" was declared but never referenced
         int acc_flag=1;
-Blinky.c(55): warning:  #177-D: variable "turn_flag" was declared but never referenced
-        int turn_flag=0;
 Blinky.c(56): warning:  #177-D: variable "acc_count" was declared but never referenced
         int acc_count=0;
 Blinky.c(57): warning:  #177-D: variable "turning_high" was declared but never referenced
         int turning_high=25000;
 Blinky.c(58): warning:  #177-D: variable "turning_low" was declared but never referenced
         int turning_low=15000;
-Blinky.c(372): warning:  #167-D: argument of type "volatile unsigned char *" is incompatible with parameter of type "unsigned char *"
+Blinky.c(354): warning:  #167-D: argument of type "volatile unsigned char *" is incompatible with parameter of type "unsigned char *"
                 DEBUG_print_camera(buffer[0][1-buffer_sel]);
-Blinky.c(330): warning:  #177-D: variable "midpoint" was declared but never referenced
+Blinky.c(312): warning:  #177-D: variable "midpoint" was declared but never referenced
                 int midpoint;
-Blinky.c(331): warning:  #177-D: variable "keyIn" was declared but never referenced
+Blinky.c(313): warning:  #177-D: variable "keyIn" was declared but never referenced
                 char keyIn;
-Blinky.c: 10 warnings, 0 errors
+Blinky.c: 9 warnings, 0 errors
 compiling timers.c...
 timers.c(94): warning:  #177-D: variable "dummy" was declared but never referenced
         int dummy=0;
@@ -67,8 +65,8 @@ compiling mma8451.c...
 assembling startup_MKL25Z4.s...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=9296 RO-data=384 RW-data=108 ZI-data=1540  
-".\Objects\Lab2P1.axf" - 0 Error(s), 11 Warning(s).
+Program Size: Code=9408 RO-data=384 RW-data=108 ZI-data=1540  
+".\Objects\Lab2P1.axf" - 0 Error(s), 10 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -98,102 +96,8 @@ Package Vendor: Keil
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-ystem_MKL25Z4.c
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-Init_PWM_motor();
-Blinky.c(211): warning:  #77-D: this declaration has no storage class or type specifier
-        Init_PWM_motor();
-Blinky.c(211): error:  #147: declaration is incompatible with "void Init_PWM_motor(void)" (declared at line 8 of "PWM_Kit.h")
-        Init_PWM_motor();
-Blinky.c(212): warning:  #1295-D: Deprecated declaration Init_PWM_servo - give arg types
-    Init_PWM_servo();
-Blinky.c(212): warning:  #77-D: this declaration has no storage class or type specifier
-    Init_PWM_servo();
-Blinky.c(212): error:  #147: declaration is incompatible with "void Init_PWM_servo(void)" (declared at line 9 of "PWM_Kit.h")
-    Init_PWM_servo();
-Blinky.c(213): warning:  #1295-D: Deprecated declaration Start_PIT - give arg types
-        Start_PIT();
-Blinky.c(213): warning:  #77-D: this declaration has no storage class or type specifier
-        Start_PIT();
-Blinky.c(213): error:  #147: declaration is incompatible with "void Start_PIT(void)" (declared at line 8 of "timers.h")
-        Start_PIT();
-Blinky.c(219): error:  #77-D: this declaration has no storage class or type specifier
-        next_state=0;
-Blinky.c(221): error:  #77-D: this declaration has no storage class or type specifier
-        left_PW=60000;
-Blinky.c(221): error:  #148: variable "left_PW" has already been initialized
-        left_PW=60000;
-Blinky.c(222): error:  #77-D: this declaration has no storage class or type specifier
-        right_PW=0;
-Blinky.c(222): error:  #148: variable "right_PW" has already been initialized
-        right_PW=0;
-Blinky.c(225): error:  #169: expected a declaration
-        while(1){
-Blinky.c(248): warning:  #12-D: parsing restarts here after previous syntax error
-                                middle_point=0;
-Blinky.c(251): error:  #77-D: this declaration has no storage class or type specifier
-                                left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-Blinky.c(251): error:  #59: function call is not allowed in a constant expression
-                                left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-Blinky.c(251): error:  #28: expression must have a constant value
-                                left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-Blinky.c(252): error:  #77-D: this declaration has no storage class or type specifier
-                                right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-Blinky.c(252): error:  #59: function call is not allowed in a constant expression
-                                right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-Blinky.c(252): error:  #28: expression must have a constant value
-                                right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-Blinky.c(256): error:  #77-D: this declaration has no storage class or type specifier
-                                left_track=left_track>15?left_track-10:0;
-Blinky.c(256): error:  #148: variable "left_track" has already been initialized
-                                left_track=left_track>15?left_track-10:0;
-Blinky.c(256): error:  #28: expression must have a constant value
-                                left_track=left_track>15?left_track-10:0;
-Blinky.c(256): error:  #28: expression must have a constant value
-                                left_track=left_track>15?left_track-10:0;
-Blinky.c(257): error:  #77-D: this declaration has no storage class or type specifier
-              right_track=right_track>15?right_track-10:0;
-Blinky.c(257): error:  #148: variable "right_track" has already been initialized
-              right_track=right_track>15?right_track-10:0;
-Blinky.c(257): error:  #28: expression must have a constant value
-              right_track=right_track>15?right_track-10:0;
-Blinky.c: 19 warnings, 30 errors
-compiling timers.c...
-timers.c(94): warning:  #177-D: variable "dummy" was declared but never referenced
-        int dummy=0;
-timers.c: 1 warning, 0 errors
-compiling uart.c...
-compiling global_var.c...
-compiling ADC_Kit.c...
-compiling PWM_Kit.c...
-compiling Kit_chain.c...
-compiling core_algorithm.c...
-compiling delay.c...
-compiling i2c.c...
-compiling LEDs.c...
-compiling mma8451.c...
-assembling startup_MKL25Z4.s...
-compiling system_MKL25Z4.c...
-".\Objects\Lab2P1.axf" - 30 Error(s), 20 Warning(s).
-
-<h2>Software Packages used:</h2>
-
-Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.4.2.0.pack
-                ARM::CMSIS:CORE:3.40.0
-                CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 3.40.0
-
-Package Vendor: Keil
-                http://www.keil.com/pack/Keil.Kinetis_KLxx_DFP.1.4.0.pack
-                Keil::Device:Startup:1.0.0
-                Freescale Kinetis KLxx Series Device Support and Examples
-   * Component: Startup Version: 1.0.0
-
-<h2>Collection of Component include folders:</h2>
-  D:\workspace\Natcar\RTE
-  D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include
-  D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include
+clude
 
 <h2>Collection of Component Files used:</h2>
 

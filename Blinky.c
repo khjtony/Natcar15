@@ -232,6 +232,9 @@ int main (void) {
 			// 	put("CASE 1");
 				read_full_xyz();
 				convert_xyz_to_roll_pitch();
+			
+			
+				
 			//mid point cali
 				middle_point=0;
 			
@@ -240,15 +243,10 @@ int main (void) {
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
 			//setup dead zone
-			//if(turn_flag){
-				left_track=left_track>15?left_track-15:0;
-	      right_track=right_track>15?right_track-15:0;
-			//}
-			//else{
-				//left_track=left_track>10?left_track-10:0;
-	      //right_track=right_track>10?right_track-10:0;
-			//}
-			
+
+				left_track=left_track>13?left_track-13:0;
+	      right_track=right_track>13?right_track-13:0;
+		
 			//Series of checking
 			//out of track STOP!
 				if (left_track>100 && right_track>100){
@@ -259,57 +257,41 @@ int main (void) {
 				}
 				
 				
-							//where is middle point
+				//where is middle point
 				middle_point=middle_point+right_track-left_track;
 				
-			//hill!!
+			//accel
+				//hill!!
 				if (fabs(pitch) > 30){
+					servo_PW=_servo_limit(4500-(middle_point)*20);
 					left_PW = 40000;
 					right_PW = 20000;
 					continue;
 				}
-				
-			//accel
-				if (left_track<20 && right_track<20){
-						left_PW = _motor_limit(left_PW-1,0);
-						right_PW = _motor_limit(right_PW+1,1);
-				}else{
-				}
-			
 
-			
-			//turning front wheels
-			 // servo_PW=_servo_limit(4500-(middle_point)*(middle_point)*10*1/10*(middle_point<0? -1:1));
-				if (middle_point<40){
+				if (middle_point==0){
+					if(turn_flag){
+							turn_flag=0;
+							left_PW = 30000;
+							right_PW = 30000;
+							}
+						else{
+						left_PW = _motor_limit(left_PW-2,0);
+						right_PW = _motor_limit(right_PW+2,1);
+						}
+				}
+			 else	if (middle_point<40){
+				  turn_flag=1;
 					servo_PW=_servo_limit(4500-(middle_point)*25);
+					left_PW=_motor_limit(30000-40*middle_point,0);
+				  right_PW=_motor_limit(30000-40*middle_point,1);
 				}
 				else{
-					servo_PW=_servo_limit(4500-25*40*(middle_point < 0? -1:1)-(middle_point)*60);
+					turn_flag=1;
+					servo_PW=_servo_limit(4500-25*40*(middle_point < 0? -1:1)-(middle_point-40)*90);
+					left_PW=_motor_limit(30000-90*middle_point,0);
+					right_PW=_motor_limit(30000-90*middle_point,1);
 				}
-				//servo_PW=_servo_limit(4500-(middle_point)*25);
-			//change rear wheel speed
-				left_PW=_motor_limit(35000-90*middle_point,0);
-				right_PW=_motor_limit(25000-90*middle_point,1);
-				//left_PW=35000;
-				//right_PW=25000;
-				
-				
-				//if(left_track<70){
-			//		servo_PW=_servo_limit(4500+(70-left_track)*left_ratio);
-			//		left_PW=35000-100*(70-left_track);
-				//	right_PW=10000;
-			//		continue;
-		//		}else if(right_track<90){
-			//		servo_PW=_servo_limit(4500-(90-right_track)*right_ratio);
-		//			left_PW=43000-30*(90-right_track);
-			//		right_PW=15000+100*(90-right_track);
-			//		continue;
-		//		}else{
-		//			servo_PW=_servo_limit(4500);
-		//			left_PW=38000;
-	//				right_PW=12000;
-	//				continue;				
-	//			}
 			
 				//analyze and control car
 				next_state = 1;
@@ -329,8 +311,8 @@ int main (void) {
 void _DEBUG_running(){
 		int midpoint;
 		char keyIn;
-		//left_PW=55000;
-		//right_PW=5000;
+		left_PW=10000;
+		right_PW=50000;
 /*		
 			//ADC conversion and read value
 	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
