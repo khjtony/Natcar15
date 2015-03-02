@@ -503,6 +503,51 @@
               <FileType>1</FileType>
               <FilePath>.\core_algorithm.c</FilePath>
             </File>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\accel\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\accel\delay.h</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO_defs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\accel\GPIO_defs.h</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\accel\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\accel\i2c.h</FilePath>
+            </File>
+            <File>
+              <FileName>LEDs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\accel\LEDs.c</FilePath>
+            </File>
+            <File>
+              <FileName>LEDs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\accel\LEDs.h</FilePath>
+            </File>
+            <File>
+              <FileName>mma8451.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\accel\mma8451.c</FilePath>
+            </File>
+            <File>
+              <FileName>mma8451.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\accel\mma8451.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

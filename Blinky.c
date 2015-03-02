@@ -198,6 +198,7 @@ int main (void) {
 	i2c_init();																/* init i2c	*/
 	init_mma(); 												/* init mma peripheral */
 	Start_PIT();
+	Init_RGB_LEDs();
 	
 	
 	//put("Hello World\n");
@@ -208,14 +209,6 @@ int main (void) {
 	left_PW=60000;
 	right_PW=0;
 	
-
-	while (1) {
-		read_full_xyz();
-		convert_xyz_to_roll_pitch();
-		// Light green LED if pitch > 10 degrees
-		// Light blue LED if roll > 10 degrees
-		Control_RGB_LEDs(0, (fabs(roll) > 10)? 1:0, (fabs(pitch) > 10)? 1:0);
-	}
 
 
 
