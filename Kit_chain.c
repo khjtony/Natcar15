@@ -167,7 +167,7 @@ void translator_4(int keyIn){
 
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
   int i=0;
-	int threshold=0x50;
+	int threshold=0x40;
 	int bound=0;
 	int tempSum=0;
 	
@@ -205,14 +205,14 @@ int _motor_limit(int input,int option){
 		return 60000;
 		}
 		else{
-			return 20000;
+			return 10000;
 		}
 	}
 	else{
 		if (input<30000 && input >0){
 			return input;
 		}else if(input>30000){
-		return 40000;
+		return 50000;
 		}
 		else{
 			return 0;

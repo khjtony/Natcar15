@@ -209,6 +209,17 @@ int main (void) {
 	right_PW=0;
 	
 
+	while (1) {
+		read_full_xyz();
+		convert_xyz_to_roll_pitch();
+		// Light green LED if pitch > 10 degrees
+		// Light blue LED if roll > 10 degrees
+		Control_RGB_LEDs(0, (fabs(roll) > 10)? 1:0, (fabs(pitch) > 10)? 1:0);
+	}
+
+
+
+
 	while(1){
 		switch (next_state){
 			case 0:
@@ -260,36 +271,39 @@ int main (void) {
 				
 			//accel
 				//hill!!
-				if (fabs(pitch) > 30){
+				if (pitch >30){
 					servo_PW=_servo_limit(4500-(middle_point)*20);
+					Control_RGB_LEDs(0, 0, 1);
 					left_PW = 40000;
 					right_PW = 20000;
 					continue;
 				}
 
 				if (middle_point<15 && middle_point>-15){
-					servo_PW=_servo_limit(4500-(middle_point)*5);
+					servo_PW=_servo_limit(4500-(middle_point-15)*3);
 				//	if(turn_flag){
 					//		turn_flag=0;
-						//	left_PW = 25000;
-							//right_PW = 35000;
+							left_PW = 15000;
+							right_PW = 45000;
 							//}
 					//	else{
-						left_PW = _motor_limit(left_PW-3,0);
-						right_PW = _motor_limit(right_PW+3,1);
+						//left_PW = _motor_limit(left_PW-3,0);
+						//right_PW = _motor_limit(right_PW+3,1);
 						//}
 				}
-			 else	if (middle_point<40 && middle_point>-40){
+			 else	if (middle_point<60 && middle_point>-60){
 				  turn_flag=1;
-					servo_PW=_servo_limit(4500-(middle_point)*25);
-				  left_PW = 25000;
-					right_PW = 35000;
+					servo_PW=_servo_limit(4500-(middle_point-15)*30);
+				 // left_PW = 25000;
+					//right_PW = 35000;
+				  left_PW = _motor_limit(30000-90*(middle_point),0);
+					right_PW = _motor_limit(30000-90*(middle_point),1);
 				}
 				else{
 					turn_flag=1;
-					servo_PW=_servo_limit(4500-25*40*(middle_point < 0? -1:1)-(middle_point-40)*90);
-					left_PW = 25000;
-					right_PW = 35000;
+					servo_PW=_servo_limit(4500-30*60*(middle_point < 0? -1:1)-(middle_point-60)*65);
+					left_PW = _motor_limit(30000-90*(middle_point),0);
+					right_PW = _motor_limit(30000-90*(middle_point),1);
 				}
 			
 				//analyze and control car
