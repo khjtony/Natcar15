@@ -30,12 +30,12 @@ unsigned char POT2;
 
 void translator(char keyIn);  //a translator to convert input value to char
 int current_read;
-int Q[100];
+int Q[20];
 int Q_index=0;
 
 void Loop_Q_init(){
 	int i=0;
-	for (i=0;i<100;i++){
+	for (i=0;i<20;i++){
 		Q[i]=0;
 	}
 }
@@ -43,7 +43,7 @@ void Loop_Q_init(){
 void Loop_Q(int value){
 	Q[Q_index]=value;
 	Q_index++;
-	if (Q_index>=99){
+	if (Q_index>=19){
 		Q_index=0;
 	}
 }
@@ -51,7 +51,7 @@ void Loop_Q(int value){
 int Loop_Q_percent(){
 	int i=0;
 	int count=0;
-	for (i=0;i<100;i++){
+	for (i=0;i<20;i++){
 		count+=(Q[i]>0? 1:0);
 	}
 	return count;
@@ -292,14 +292,14 @@ int main (void) {
 				
 			//accel
 				//hill!!
-				if (fabs(roll)>23){
+				if (fabs(pitch)>30){
 					Loop_Q(1);
 					Control_RGB_LEDs(0, 1, 0);
 				}else{
 					Loop_Q(0);
 				}
 				
-				if (Loop_Q_percent()>50){
+				if (Loop_Q_percent()>14){
 					servo_PW=_servo_limit(4500-(middle_point)*20);
 					Control_RGB_LEDs(0, 0, 1);
 					left_PW = 40000;
@@ -313,27 +313,27 @@ int main (void) {
 					servo_PW=_servo_limit(4500-(middle_point-8)*3);
 				//	if(turn_flag){
 					//		turn_flag=0;
-							//left_PW = 25000;
-						//	right_PW = 35000;
+							left_PW = 23000;
+							right_PW = 37000;
 							//}
 					//	else{
-						left_PW = _motor_limit(left_PW-2,0);
-						right_PW = _motor_limit(right_PW+2u,1);
+						//left_PW = _motor_limit(left_PW-2,0);
+						//right_PW = _motor_limit(right_PW+2u,1);
 						//}
 				}
 			 else	if (middle_point<80 && middle_point>-80){
 				  turn_flag=1;
-					servo_PW=_servo_limit(4500-(middle_point-13)*20);
-				  left_PW = 25000;
-					right_PW = 35000;
+					servo_PW=_servo_limit(4500-(middle_point-15)*20);
+				  left_PW = 22000;
+					right_PW = 38000;
 				 // left_PW = _motor_limit(30000-60*(middle_point),0);
 				//	right_PW = _motor_limit(30000-60*(middle_point),1);
 				}
 				else{
 					turn_flag=1;
-					servo_PW=_servo_limit(4500-20*80*(middle_point < 0? -1:1)-(middle_point-80)*45);
-					left_PW = _motor_limit(30000-60*(middle_point),0);
-					right_PW = _motor_limit(3000000-60*(middle_point),1);
+					servo_PW=_servo_limit(4500-23*80*(middle_point < 0? -1:1)-(middle_point-80)*45);
+					left_PW = _motor_limit(20000-60*(middle_point),0);
+					right_PW = _motor_limit(40000-60*(middle_point),1);
 				}
 			
 				//analyze and control car

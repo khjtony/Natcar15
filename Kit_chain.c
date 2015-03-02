@@ -167,7 +167,7 @@ void translator_4(int keyIn){
 
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
   int i=0;
-	int threshold=0x40;
+	int threshold=0x45;
 	int bound=0;
 	int tempSum=0;
 	
