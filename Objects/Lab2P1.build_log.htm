@@ -29,23 +29,23 @@ Rebuild target 'Blinky'
 compiling adc0.c...
 compiling adc16.c...
 compiling Blinky.c...
-Blinky.c(51): warning:  #177-D: variable "left_ratio" was declared but never referenced
+Blinky.c(78): warning:  #177-D: variable "left_ratio" was declared but never referenced
         int left_ratio=20;
-Blinky.c(52): warning:  #177-D: variable "right_ratio" was declared but never referenced
+Blinky.c(79): warning:  #177-D: variable "right_ratio" was declared but never referenced
         int right_ratio=25;
-Blinky.c(54): warning:  #177-D: variable "acc_flag" was declared but never referenced
+Blinky.c(81): warning:  #177-D: variable "acc_flag" was declared but never referenced
         int acc_flag=1;
-Blinky.c(55): warning:  #550-D: variable "turn_flag" was set but never used
+Blinky.c(82): warning:  #550-D: variable "turn_flag" was set but never used
         int turn_flag=0;
-Blinky.c(56): warning:  #177-D: variable "acc_count" was declared but never referenced
+Blinky.c(83): warning:  #177-D: variable "acc_count" was declared but never referenced
         int acc_count=0;
-Blinky.c(57): warning:  #177-D: variable "turning_high" was declared but never referenced
+Blinky.c(84): warning:  #177-D: variable "turning_high" was declared but never referenced
         int turning_high=25000;
-Blinky.c(58): warning:  #177-D: variable "turning_low" was declared but never referenced
+Blinky.c(85): warning:  #177-D: variable "turning_low" was declared but never referenced
         int turning_low=15000;
-Blinky.c(318): warning:  #177-D: variable "midpoint" was declared but never referenced
+Blinky.c(355): warning:  #177-D: variable "midpoint" was declared but never referenced
                 int midpoint;
-Blinky.c(319): warning:  #177-D: variable "keyIn" was declared but never referenced
+Blinky.c(356): warning:  #177-D: variable "keyIn" was declared but never referenced
                 char keyIn;
 Blinky.c: 9 warnings, 0 errors
 compiling timers.c...
@@ -65,7 +65,7 @@ compiling mma8451.c...
 assembling startup_MKL25Z4.s...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=9568 RO-data=384 RW-data=108 ZI-data=1540  
+Program Size: Code=9768 RO-data=384 RW-data=120 ZI-data=1936  
 ".\Objects\Lab2P1.axf" - 0 Error(s), 10 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -96,30 +96,8 @@ Package Vendor: Keil
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
+Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
+Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
 </pre>
 </body>
 </html>
-ersion: 1.0.0
-
-<h2>Collection of Component include folders:</h2>
-  D:\workspace\Natcar\RTE
-  D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include
-  D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include
-
-<h2>Collection of Component Files used:</h2>
-
-   * Component: ARM::CMSIS:CORE:3.40.0
-      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
-
-   * Component: Keil::Device:Startup:1.0.0
-      Source file:   Device\Source\ARM\startup_MKL25Z4.s
-      Source file:   Device\Source\system_MKL25Z4.c
-Target not created.
-Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file 'D:\workspace\Natcar\Objects\Lab2P1.axf'
-Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-_____^
-*** error 56: cannot open file
-Error: Flash Download failed  -  Could not load file 'D:\workspace\Natcar\Objects\Lab2P1.axf'

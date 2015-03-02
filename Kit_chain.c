@@ -197,6 +197,11 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 //
 //}
 
+
+
+	
+
+
 int _motor_limit(int input,int option){
 	if (option==0){
 		if (input<60000 && input >30000){
@@ -205,14 +210,14 @@ int _motor_limit(int input,int option){
 		return 60000;
 		}
 		else{
-			return 10000;
+			return 15000;
 		}
 	}
 	else{
 		if (input<30000 && input >0){
 			return input;
 		}else if(input>30000){
-		return 50000;
+		return 45000;
 		}
 		else{
 			return 0;
@@ -225,9 +230,9 @@ int _servo_limit(int input){
 		if (input<6000 && input >3000){
 			return input;
 		}else if(input>6000){
-		return 6000;
+		return 5500;
 		}
 		else{
-			return 3000;
+			return 3300;
 		}
 	}
