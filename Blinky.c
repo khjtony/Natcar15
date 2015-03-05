@@ -21,12 +21,13 @@
 #include "./accel/mma8451.h"
 #include "./accel/delay.h"
 
-
+#define uart_baud 57600
 #define buffer_ceil 128
 
 
 unsigned char POT1; 
 unsigned char POT2;
+
 
 void translator(char keyIn);  //a translator to convert input value to char
 int current_read;
@@ -99,7 +100,7 @@ int main (void) {
 	PORTA->PCR[1] |= PORT_PCR_MUX(0x2);		// Enable the UART0_RX function on PTA1
 	PORTA->PCR[2] |= PORT_PCR_MUX(0x2);		// Enable the UART0_TX function on PTA2
 	uart0_clk_khz = (48000000 / 1000); // UART0 clock frequency will equal half the PLL frequency	
-	uart0_init (uart0_clk_khz, TERMINAL_BAUD);
+	uart0_init (uart0_clk_khz, uart_baud);
 	
 	
 	//************************************
@@ -219,7 +220,7 @@ int main (void) {
 	right_PW=0;
 	left_PW=0;
 	servo_PW=4500;
-	Init_PIT(12000);																		// count-down period = 100HZ
+	Init_PIT(20000);																		// count-down period = 100HZ T=48Mhz/12000
 	Init_PWM_motor();
   Init_PWM_servo();
 	i2c_init();																/* init i2c	*/
@@ -234,7 +235,7 @@ int main (void) {
 	//Enter state machine
 	next_state=0;
 
-	left_PW=60000;
+	left_PW=0;
 	right_PW=0;
 	
 
@@ -354,8 +355,8 @@ int main (void) {
 void _DEBUG_running(){
 		int midpoint;
 		char keyIn;
-		//left_PW=10000;
-	//	right_PW=50000;
+	//	left_PW=1500;
+	//	right_PW=1500;
 /*		
 			//ADC conversion and read value
 	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
@@ -389,13 +390,14 @@ void _DEBUG_running(){
 */
 
 		if (Camera_DONE==1){
-		 DEBUG_print_track(buffer[0][1-buffer_sel]);
-		 DEBUG_print_track(buffer[1][1-buffer_sel]);
-			put("\r\n");
+		// DEBUG_print_track(buffer[0][1-buffer_sel]);
+		// DEBUG_print_track(buffer[1][1-buffer_sel]);
+	//		put("\r\n");
 		 //DEBUG_print_double_camera(buffer[0][1-buffer_sel],buffer[1][1-buffer_sel]);
-		//uart0_putchar(0x00);
-		//DEBUG_print_camera(buffer[0][1-buffer_sel]);
-		//DEBUG_print_camera(buffer[1][1-buffer_sel]);
+		uart0_putchar(0x00);
+		DEBUG_print_camera(buffer[0][1-buffer_sel]);
+		uart0_putchar(0x01);
+		DEBUG_print_camera(buffer[1][1-buffer_sel]);
 			
 			//int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 	    //int right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);

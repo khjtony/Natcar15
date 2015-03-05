@@ -17,7 +17,7 @@
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer);
 unsigned int dutyCycle(char POT);
 void DEBUG_print_track(volatile char unsigned *buffer);
-void DEBUG_print_camera(char unsigned *buffer);
+void DEBUG_print_camera(volatile char unsigned *buffer);
 void DEBUG_print_double_camera(char unsigned *buffer1,char unsigned *buffer2);
 int SINGLE_TRACK_ANY(char unsigned *buffer);
 int DEBUG_print_midpoint(char unsigned *buffer);

@@ -1,6 +1,9 @@
 #include <MKL25Z4.H>
 #include "Kit_chain.h"
 
+volatile uint8_t _camera_buffer[128];
+void _Mfilter_Camera(volatile uint8_t* buffer);
+
 void translator(char keyIn){
 	
 	int part1=keyIn&0xF0;
@@ -72,14 +75,14 @@ void DEBUG_print_double_camera(char unsigned *buffer1,char unsigned *buffer2)
 	}
 }
 
-void DEBUG_print_camera(char unsigned *buffer){
+void DEBUG_print_camera(volatile char unsigned *buffer){
   int i=0;    
 	//uart0_putchar(0xff);
 	//uart0_putchar(0x00);
 	//uart0_putchar(0xff);  //start sign
   for(i=0;i<buffer_ceil;i++){
-		if (buffer[i]==0x00){
-			uart0_putchar(0x01);
+		if (buffer[i]==0x00 | buffer[i]==0x01){
+			uart0_putchar(0x02);
 			//translator(0x01);
 		}else{
 			uart0_putchar(buffer[i]);
@@ -166,11 +169,12 @@ void translator_4(int keyIn){
 
 
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
+	// use _camera_buffer!!
   int i=0;
 	int threshold=0x45;
 	int bound=0;
 	int tempSum=0;
-	
+	_Mfilter_Camera(buffer);
  	i=9;
 	for(i=5;i<127-5;i++){
 		//tempSum=buffer[i-1]+buffer[i]+buffer[i+1];
@@ -183,19 +187,6 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 	return bound;
 }
 
-
-//void LED_Initialize(void) {
-//  PORTB->PCR[18] = (1UL <<  8);                      /* Pin PTB18 is GPIO */
-//  PORTB->PCR[19] = (1UL <<  8);                      /* Pin PTB19 is GPIO */
-//  PORTD->PCR[1]  = (1UL <<  8);                      /* Pin PTD1  is GPIO */ 
-//	
-//  FPTB->PDOR |= (led_mask[0] | led_mask[1] );          /* switch Red/Green LED off  */
-//  FPTB->PDDR |= (led_mask[0] | led_mask[1]);          /* enable PTB18/19 as Output */
-//
-//  FPTD->PDOR |= led_mask[2];            /* switch Blue LED off  */
-//  FPTD->PDDR |= led_mask[2];            /* enable PTD1 as Output */
-//
-//}
 
 
 
@@ -236,3 +227,30 @@ int _servo_limit(int input){
 			return 3300;
 		}
 	}
+
+	
+void _Mfilter_Camera(volatile uint8_t* buffer){
+	int i=0;
+	uint8_t temp1;
+	uint8_t temp2;
+	uint8_t temp3;
+	for (i=1;i<127;i++){
+		temp1=_camera_buffer[i-1];
+		temp2=_camera_buffer[i];
+		temp3=_camera_buffer[i+1];
+		if (temp1>=temp2 && temp1<=temp3){		//temp1 is mid
+			_camera_buffer[i]=temp1;
+		}else if(temp1<=temp2 && temp1>=temp3){ 		//temp1 is mid
+			_camera_buffer[i]=temp1;
+		}else if(temp2>=temp1 && temp2<=temp3){
+			_camera_buffer[i]=temp2;
+		}else if(temp2<=temp1 && temp2>=temp3){
+			_camera_buffer[i]=temp2;
+		}else if(temp3>=temp1 && temp3<=temp2){
+			_camera_buffer[i]=temp3;
+		}else if(temp3<=temp1 && temp3>=temp2){
+			_camera_buffer[i]=temp3;
+		}
+	}
+
+}

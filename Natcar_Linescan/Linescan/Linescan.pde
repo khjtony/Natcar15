@@ -4,65 +4,140 @@
 import processing.serial.*;
 
 Serial myPort;    // The serial port
-PFont myFont;     // The display font
-String inString;  // Input string from serial port
-int lf = 10;      // ASCII linefeed
-int buffersize= 128;
-byte[] inBuffer = new byte[buffersize];
+volatile int totalcounter=0;
+
+volatile int index=0;
+int buffersize= 128*2;
+volatile byte[] inBuffer = new byte[buffersize*2];
+int data_width=128;
+int data_height=0xff;
+int middle=data_width*2;
+float[] camera_FIR={0.0022082,-0,-0,0,0.014026,-0,-0,0,0.048987,-0,-0,0,0.31509,0.5,0.31509,0,-0,-0,0.048987,0,-0,-0,0.014026,0,-0,-0,0.0022082};
+byte threshould=0x40;
+
+
+//filters:
+void convolve(byte Signal[/* SignalLen */], int SignalLen,
+              float Kernel[/* KernelLen */], int KernelLen,
+              byte Result[/* SignalLen + KernelLen - 1 */])
+{
+  int n;
+
+  for (n = 0; n < SignalLen + KernelLen - 1; n++)
+  {
+    int kmin, kmax, k;
+
+    Result[n] = 0;
+
+    kmin = (n >= KernelLen - 1) ? n - (KernelLen - 1) : 0;
+    kmax = (n < SignalLen - 1) ? n : SignalLen - 1;
+
+    for (k = kmin; k <= kmax; k++)
+    {
+      Result[n] += (byte)((float)Signal[k] * (float)Kernel[n - k]);
+    }
+    
+  }
+}
+//convolve
+
+void Gfilter(byte input[], byte output[], int len){
+//using 5th order of Yanghui's Tri for coefficient 1 4 6 4 1
+  float[] FIR=camera_FIR;
+  convolve(input, len,
+           FIR, 27,
+           output);
+
+}
+
+void Mfilter(byte input[], byte output[], int len){
+  int i=0;
+  byte zip[] = new byte[3] ;
+  for (i=1;i<len-1;i++){
+    zip[0]=input[i-1];
+    zip[1]=input[i];
+    zip[2]=input[i+1];
+    zip=sort(zip);
+    output[i]=zip[1];
+  }
+}
+
+void Cfilter(byte input[], byte output[], int len){
+  float[] correlation={0x80,0x80,0x80,0x80,0x20,0x20,0x20,0x20,0x80,0x80,0x80,0x80,0x80};
+  convolve(input, len,
+           correlation, 12,
+           output);
+
+}
+
+
+void Bfilter(byte input[], byte output[], int len){
+  int i=0;
+  byte zip[] = new byte[3] ;
+  for (i=1;i<len-1;i++){
+    output[i]=(byte)(int(inBuffer[i])>threshould? 0xff:0) ;
+  }
+}
+
 
 void setup() {
-  size(600,600);
+  size(data_width*4,data_height*2);
   // Make your own font. It's fun!
   // List all the available serial ports:
   println(Serial.list());
   // Open the port you are using at the rate you want:
- 
-  myPort.buffer(buffersize);
+  myPort = new Serial(this, Serial.list()[1], 115200);
+  for (int i=0;i>buffersize;i++){
+    inBuffer[i]=0x00;
+  }
 
 }
+
+
+
 
 void draw() {
   // Twiddle your thumbs
   background(255);
+  byte outBuffer[] = new byte[buffersize+40];
+  strokeWeight(0); //Thinker
   
-//  myPort.readBytes(inBuffer);
-//  for (int i=0;i<buffersize-130;i++){
-//    
-//    if ((int(inBuffer[i])== 0)){
-////          println("YES!");
-//        for (int j=i+3;j<i+3+128;j++){
-//          strokeWeight(4);  // Thicker
-//         
-//          
-//          line(2*(j-3-i),600-2*int(inBuffer[j]),2*(j-3+1-i),600-2*int(inBuffer[j+1]));
-//          //H line 600-2*128
-//          line(0,600-2*128,600,600-2*128);
-//          //H line 600-2*255
-//          line(0,600-2*255,600,600-2*255);
-//          //H line 600-2*40
-//          line(0,600-2*60,600,600-2*60);
-//        
-//        }
-//        return;
-//        }
-//        
-//}
-  while (int(myPort.read()) != 0x00){
+
+  line(0,data_height*2-0xff,data_width*4,data_height*2-0xff);
+  line(0,data_height*2-0xff/2,data_width*4,data_height*2-0xff/2);
+  line(0,data_height*2-2*0x40,data_width*4,data_height*2-2*0x40);
+  
+  //Mfilter(inBuffer,outBuffer, buffersize);
+  //Gfilter(inBuffer,outBuffer, buffersize);
+  //Bfilter(inBuffer,outBuffer, buffersize);
+  Cfilter(inBuffer,outBuffer, buffersize);
+  
+  for (int i=0;i<buffersize-1;i++){     
+      line(2*(i),data_height*2-int(outBuffer[i]),2*(i+1),data_height*2-int(outBuffer[i+1]));
   }
-  strokeWeight(4); //Thinker
-  myPort.readBytes(inBuffer);
-  //H line 600-2*128
-          line(0,600-2*128,600,600-2*128);
-//          //H line 600-2*255
-          line(0,600-2*255,600,600-2*255);
-//          //H line 600-2*40
-          line(0,600-2*60,600,600-2*60);
-  for (int i=0;i<buffersize-1;i++){        
-      line(3*(i),600-2*int(inBuffer[i]),3*(i+1),600-2*int(inBuffer[i+1]));
+  for (int i=0;i<buffersize-1;i++){  
+      line(2*(i),data_height-int(inBuffer[i]),2*(i+1),data_height-int(inBuffer[i+1]));
+
   }
-  myPort.clear();
-  return;
+  delay(10);
 }
+
+void serialEvent(Serial myPort) { 
+  int item;
+  item=myPort.read();
+  if ((item)==0x00){
+    index=0;
+//    inBuffer[index]=(byte)myPort.read();
+  }
+   else if((item)==0x01){
+    index=128;
+//    inBuffer[index]=(byte)myPort.read();
+    }else if (index<127*2){
+      index++;
+      inBuffer[index]=(byte)item;
+      
+    }
+} 
 
 
 
