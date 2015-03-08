@@ -1,8 +1,58 @@
 #include <MKL25Z4.H>
 #include "Kit_chain.h"
+#include <stdlib.h>
 
 volatile uint8_t _camera_buffer[128];
 void _Mfilter_Camera(volatile uint8_t* buffer);
+
+volatile int8_t current_roll;
+
+volatile int8_t accel_queue[5];
+volatile int8_t accel_queue_index=0;
+uint8_t left_camera_last=0;
+uint8_t right_camera_last=0;
+
+int _compare (const void * a, const void * b)
+{
+  return ( *(int8_t*)a - *(int8_t*)b );
+}
+
+
+void accel_queue_init(void){
+	int i=0;
+	for (i=0;i<5;i++){
+		accel_queue[i]=0;
+	}
+}
+
+int8_t get_roll(void){
+	int i=0;
+	//create temp queue
+	int8_t temp_Q[5];
+	//copy and pass to Median filter
+	for (i=0;i<5;i++){
+		temp_Q[i]=accel_queue[i];
+	}
+	qsort(temp_Q, 5, sizeof(int8_t), _compare); 
+	current_roll=temp_Q[2];
+	return current_roll;
+}
+
+
+
+void accel_Q(){
+	read_xyz();
+	convert_xyz_to_roll();
+	//add new value into volatile queue
+	accel_queue[accel_queue_index]=roll;
+	accel_queue_index++;
+	//loop back
+	if (accel_queue_index>=5){
+		accel_queue_index=0;
+	}
+	return;
+}
+
 
 void translator(char keyIn){
 	
@@ -193,27 +243,15 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 	
 
 
-int _motor_limit(int input,int option){
-	if (option==0){
-		if (input<60000 && input >30000){
+int _motor_limit(int input){
+		if (input<3000 && input >0){
 			return input;
-		}else if(input>60000){
-		return 60000;
-		}
-		else{
-			return 15000;
-		}
-	}
-	else{
-		if (input<30000 && input >0){
-			return input;
-		}else if(input>30000){
-		return 45000;
+		}else if(input>3000){
+		return 3000;
 		}
 		else{
 			return 0;
 		}
-	}
 }
 
 
@@ -252,5 +290,87 @@ void _Mfilter_Camera(volatile uint8_t* buffer){
 			_camera_buffer[i]=temp3;
 		}
 	}
-
 }
+
+
+int camera_edge_detect(volatile char unsigned *buffer,uint8_t option){
+		//drop 7 pixels on the both ends
+	int i=0;
+	uint8_t max_pos=0;
+	uint8_t max_the=0;
+	int diff=0;
+	unsigned char thereshold=0x40;
+	uint8_t vol_the=SINGLE_TRACK_SIDE(buffer);
+	for (i=15;i<128-15;i++){
+		diff = buffer[i]>buffer[i+4] ? buffer[i]-buffer[i+4] :  buffer[i+4]-buffer[i] ;
+		if (diff > thereshold & diff > max_the){
+			max_the=diff;
+			max_pos=i+1;
+			max_pos=127-max_pos;
+		}
+	}
+	switch (option){
+		case 0:		//left
+			if (max_pos>=100 || max_pos<=20){
+				return vol_the;
+			}
+			left_camera_last=max_pos;
+			break;
+		case 1:		//right
+			if (max_pos>=100 || max_pos<=20){
+				return 127-vol_the;
+			}
+			right_camera_last=max_pos;
+			break;
+	}
+	return max_pos;
+}
+
+void DEBUG_camera_edge_detect(volatile char unsigned *buffer,uint8_t option){
+	uint8_t pos=camera_edge_detect(buffer,option);
+	if (pos==0x00 || pos==0x01){
+			uart0_putchar(0x02);
+			//translator(0x01);
+		}else{
+			uart0_putchar(pos);
+	}
+		
+}
+
+void Battery_ind(uint8_t count){
+	switch(count){
+		case 0:
+			FPTB->PCOR |= 1UL<<8;
+			FPTB->PCOR |= 1UL<<9;
+			FPTB->PCOR |= 1UL<<10;
+			FPTB->PCOR |= 1UL<<11;
+			break;
+		case 1:
+			FPTB->PCOR |= 1UL<<8;
+			FPTB->PCOR |= 1UL<<9;
+			FPTB->PCOR |= 1UL<<10;
+			FPTB->PSOR |= 1UL<<11;
+			break;
+		case 2:
+			FPTB->PCOR |= 1UL<<8;
+			FPTB->PCOR |= 1UL<<9;
+			FPTB->PSOR |= 1UL<<10;
+			FPTB->PSOR |= 1UL<<11;
+			break;
+		case 3:
+			FPTB->PCOR |= 1UL<<8;
+			FPTB->PSOR |= 1UL<<9;
+			FPTB->PSOR |= 1UL<<10;
+			FPTB->PSOR |= 1UL<<11;
+			break;
+		case 4:
+			FPTB->PSOR |= 1UL<<8;
+			FPTB->PSOR |= 1UL<<9;
+			FPTB->PSOR |= 1UL<<10;
+			FPTB->PSOR |= 1UL<<11;
+			break;
+	}
+}
+
+
+

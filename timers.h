@@ -3,8 +3,10 @@
 #include "MKL25Z4.h"
 #include "adc16.h"
 
-
-void Init_PIT(unsigned period);
+void Init_PIT1(unsigned period_us);
+void Start_PIT1(void);
+void Stop_PIT1(void);
+void Init_PIT(unsigned period_us);
 void Start_PIT(void);
 void Stop_PIT(void);
 

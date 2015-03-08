@@ -28,36 +28,22 @@
 unsigned char POT1; 
 unsigned char POT2;
 
+typedef struct {
+	float dState; // Last position input
+	float iState; // Integrator state
+	float iMax, iMin; // Maximum and minimum allowable integrator stat
+	float iGain; // integral gain
+	float pGain; // proportional gain
+	float dGain; // derivative gain
+	
+}PIT_car;
+
+PIT_car PID_servo;
+PIT_car PID_speed;
+
 
 void translator(char keyIn);  //a translator to convert input value to char
 int current_read;
-int Q[20];
-int Q_index=0;
-
-void Loop_Q_init(){
-	int i=0;
-	for (i=0;i<20;i++){
-		Q[i]=0;
-	}
-}
-
-void Loop_Q(int value){
-	Q[Q_index]=value;
-	Q_index++;
-	if (Q_index>=19){
-		Q_index=0;
-	}
-}
-
-int Loop_Q_percent(){
-	int i=0;
-	int count=0;
-	for (i=0;i<20;i++){
-		count+=(Q[i]>0? 1:0);
-	}
-	return count;
-}
-
 
 void put(char *ptr_str)  //copied put function
 {
@@ -65,6 +51,39 @@ void put(char *ptr_str)  //copied put function
 		uart0_putchar(*ptr_str++);
 	}
 }
+
+void PID_speed_set(float ig,float pg,float dg, float imax, float imin){
+	PID_speed.dGain=dg;
+	PID_speed.iGain=ig;
+	PID_speed.pGain=pg;
+	PID_speed.iMax=imax;
+	PID_speed.iMin=imin;
+	
+}
+void PID_servo_set(float ig,float pg,float dg, float imax, float imin){
+	PID_servo.dGain=dg;
+	PID_servo.iGain=ig;
+	PID_servo.pGain=pg;
+	PID_servo.iMax=imax;
+	PID_servo.iMin=imin;
+}
+
+
+float PID_kernel(PIT_car * pid, float error, float position){
+	float pTerm, dTerm, iTerm;
+	pTerm = pid->pGain * error; // calculate the proportional term
+	// calculate the integral state with appropriate limiting
+	pid->iState += error;
+	if (pid->iState > pid->iMax) pid->iState = pid->iMax;
+	else if (pid->iState < pid->iMin) pid->iState = pid->iMin;
+	iTerm = pid->iGain * (pid->iState); // calculate the integral term
+	dTerm = pid->dGain * (pid->dState - position);
+	pid->dState = position;
+	return pTerm + dTerm + iTerm;
+		//return pTerm + dTerm;
+}
+
+
 
 
 	
@@ -76,14 +95,9 @@ int main (void) {
 	int uart0_clk_khz;
 	int left_track;
 	int right_track;
-	int left_ratio=20;
-	int right_ratio=25;
 	int middle_point=-20;
-	int acc_flag=1;
-	int turn_flag=0;
 	int acc_count=0;
-	int turning_high=25000;
-	int turning_low=15000;
+
 	SIM->SCGC5  |= (SIM_SCGC5_PORTA_MASK
 									| SIM_SCGC5_PORTB_MASK
                   |	SIM_SCGC5_PORTC_MASK
@@ -92,54 +106,12 @@ int main (void) {
 	SIM->SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK; // set PLLFLLSEL to select the PLL for this clock source
 	SIM->SOPT2 |= SIM_SOPT2_UART0SRC(1); // select the PLLFLLCLK as UART0 clock source
 	
-	
-	//************************************
-	//	Setup uart TX
-  //	Setup uart TX
-	//************************************
-	PORTA->PCR[1] |= PORT_PCR_MUX(0x2);		// Enable the UART0_RX function on PTA1
-	PORTA->PCR[2] |= PORT_PCR_MUX(0x2);		// Enable the UART0_TX function on PTA2
-	uart0_clk_khz = (48000000 / 1000); // UART0 clock frequency will equal half the PLL frequency	
-	uart0_init (uart0_clk_khz, uart_baud);
-	
-	
-	//************************************
-	//	H-Bridge_A_IFB PTE23 ADC0_SE7a
-  //	H-Bridge_B_IFB PTE22 	ADC0_SE3
-	//************************************
-
-	PORTE->PCR[22] |= PORT_PCR_MUX(0x0);		
-	PORTE->PCR[23] |= PORT_PCR_MUX(0x0);		
-	
-	
-	//************************************
-	//	H-Bridge_A_IFB PTE23 ADC0_SE7a	PTE23 	ADC0_SE7a
-  //	H-Bridge_B_IFB 	PTE22 	ADC0_SE3
-	//************************************
-	PORTC->PCR[2] |= (1UL << 8);												// Pin PTC2 is GPIO
-	FPTC->PDOR |= 1UL<<2;																	// initialize PTC2
-	FPTC->PDDR |= 1UL<<2;
-	FPTC->PCOR &= 0UL<<2;
-	FPTC->PDOR |= 1UL<<4;																	// initialize PTC4
-	FPTC->PDDR |= 1UL<<4;
-	FPTC->PCOR &= 0UL<<4;
-	
-
-	
-	//************************************
-	//	TPM1_CH0 PTB0
-  //	Turning
-	//************************************
-	PORTB->PCR[0] = (1UL << 8);												// Pin PTB0 is GPIO
-	FPTB->PDOR |= 1;																	// initialize PTB0
-	FPTB->PDDR |= 1;																	// configure PTB0 as output
-	
-	
+//Camera	
 	//************************************
 	//	SI PTD7
   //	Camera
 	//************************************
-	PORTD->PCR[7] = (1UL << 8);												// Pin PTB0 is GPIO
+	PORTD->PCR[7] = PORT_PCR_MUX(1);												// Pin PTB0 is GPIO
 	FPTD->PDOR |= 1<<7;																	// initialize PTD7
 	FPTD->PDDR |= 1<<7;																	// configure PTD7 as output
 	
@@ -149,85 +121,198 @@ int main (void) {
   //	 Camera
 	//************************************
 	
-	PORTE->PCR[1] = (1UL << 8);												
+	PORTE->PCR[1] = PORT_PCR_MUX(1);												
 	FPTE->PDOR |= 1<<1;																
 	FPTE->PDDR |= 1<<1;		
-
-	//************************************
-	//	 AO
-  //	 Camera 1
-	//************************************
-	//ADC0->SC1[0] |= AIEN_ON| DIFF_SINGLE | ADC_SC1_ADCH(6); 
-	//start conversion on channel SE6b(PTD5)
+	
 	
 	//************************************
-	//	 AO 
-  //	 Camera 2
+	//	 Cmaera PTD5
+  //	 Camera
 	//************************************
-	//ADC0->SC1[0] |= AIEN_ON| DIFF_SINGLE | ADC_SC1_ADCH(6); 
-	//start conversion on channel SE6b(PTD5)
-
+	PORTD->PCR[5] = PORT_PCR_MUX(0);
+	
+	//************************************
+	//	 Cmaera PTD5
+  //	 Camera
+	//************************************
+	PORTD->PCR[5] = PORT_PCR_MUX(0);
+	
 	//************************************
 	//	Camera reading indicator PTB1
   //	Camera
 	//************************************
 	PORTB->PCR[1] = (1UL << 8);												// Pin PTB0 is GPIO
 	FPTB->PDOR |= 1<<1;																	// initialize PTB0
-	FPTB->PDDR |= 1<<1;																	// configure PTB0 as output
-
+	FPTB->PDDR |= 1<<1;		
+	
+	
+	
+	
+	
+//speed sensor
+	//************************************
+	//	
+  //	speed sensor @ PTA1
+	//************************************
+	PORTA->PCR[1] = PORT_PCR_MUX(1) | PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IRQC(0x0a);
+	FPTA->PDDR &= 0UL<<1;																	// configure PTA2 as INPUT
 
 
 	//************************************
-	//	Unknonw PTE21
-  //	Unknonw
+	//	
+  //	speed sensor @ PTA2
+	//************************************
+	PORTA->PCR[2] = PORT_PCR_MUX(1) | PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_IRQC(0x0a);
+	FPTA->PDDR &= 0UL<<2;																	// configure PTA2 as INPUT
+	
+	
+	
+//4-pin switch
+
+
+
+//SW switchs
+	//************************************
+	//	 SW  1 & SW 2  /PTC13 PTC17
+  //
+	//************************************
+	
+	PORTC->PCR[17] = PORT_PCR_MUX(1);
+	PORTC->PCR[13] = PORT_PCR_MUX(1);
+	FPTC->PDDR &= ~(1UL<<17);
+	FPTC->PDDR &= ~(1UL<<13);
+	
+	
+
+//battery
+	//************************************
+	//	Battery Light
+  //	Battery Light
+	//************************************
+		PORTB->PCR[8] = (1UL << 8);												// Pin PTC9 is GPIO
+	FPTB->PDOR |= 1UL<<8;																	// initialize PTB8
+	FPTB->PDDR |= 1UL<<8;																	// configure PTB8 as INPUT
+	FPTB->PCOR |= 1UL<<8;
+		PORTB->PCR[9] = (1UL << 8);												// Pin PTC9 is GPIO
+	FPTB->PDOR |= 1UL<<9;																	// initialize PTB9
+	FPTB->PDDR |= 1UL<<9;																	// configure PTB9 as INPUT
+	FPTB->PCOR |= 1UL<<9;
+		PORTB->PCR[10] = (1UL << 8);												// Pin PTC9 is GPIO
+	FPTB->PDOR |= 1UL<<10;																	// initialize PTB10
+	FPTB->PDDR |= 1UL<<10;																	// configure PTB10 as INPUT
+	FPTB->PCOR |= 1UL<<10;
+		PORTB->PCR[11] = (1UL << 8);												// Pin PTC9 is GPIO
+	FPTB->PDOR |= 1UL<<11;																	// initialize PTB11
+	FPTB->PDDR |= 1UL<<11;																	// configure PTB11 as INPUT
+	FPTB->PCOR |= 1UL<<11;
+
+
+
+//H-bridge
+	//************************************
+	//	H-Bridge_A_IFB PTE23 	ADC0_SE7a
+  //	H-Bridge_B_IFB PTE22 	ADC0_SE3
+	//************************************
+
+//	PORTE->PCR[22] = PORT_PCR_MUX(0x0);		
+//	PORTE->PCR[23] = PORT_PCR_MUX(0x0);	
+	
+	//************************************
+	//	H-Bridge_A_ FTM
+  //	H-Bridge_B_	FTM
+	//************************************
+	//Done in Motor Initial
+	
+	//************************************
+	//	H-bridge Enable
+  //
 	//************************************
 	PORTE->PCR[21] = (1UL << 8);												// Pin PTE21 is GPIO
 	FPTE->PDOR |= 1UL<<21;																	// initialize PTE21
 	FPTE->PDDR |= 1UL<<21;
-	FPTE->PCOR = 1UL<<21;
+	FPTE->PSOR |= 1UL<<21;
+
 	
-	//************************************
-	//	 ?
-  //	 ?
-	//************************************
-  FPTE->PSOR |= 1UL<<21;
-
-
-	//************************************
-	//	 setup clock PTC17 PTC17
-  //	 ??what this talking about
-	//************************************
 	
-	PORTC->PCR[17] |= PORT_PCR_MUX(1);
-	PORTC->PCR[13] |= PORT_PCR_MUX(1);
-	FPTC->PDDR &= ~(1UL<<17);
-	FPTC->PDDR &= ~(1UL<<13);
+//servo 
+	//************************************
+	//	TPM1_CH0 PTB0
+  //	Turning
+	//************************************
+	//Done in Servo initial
 	
-	//
 
 
 
-
-
-//
 	
+//UART
+	//************************************
+	//	Setup uart RX
+  //	Setup uart TX
+	//************************************
+	//PORTE->PCR[21] = PORT_PCR_MUX(0x4);		// Enable the UART0_RX function on PTB16
+	//PORTE->PCR[20] = PORT_PCR_MUX(0x4);		// Enable the UART0_TX function on PTB17
+	//PORTA->PCR[1] = PORT_PCR_MUX(0x2);		// Enable the UART0_RX function on PTB16
+	//PORTA->PCR[2] = PORT_PCR_MUX(0x2);		// Enable the UART0_TX function on PTB17
+	uart0_clk_khz = (48000000 / 1000); // UART0 clock frequency will equal half the PLL frequency	
+	uart0_init (uart0_clk_khz, uart_baud);
+
+//MMA7451Q
+
+	//************************************
+	//	
+  //	Setup Accel INT @ PTA15
+	//************************************
+		/* Select GPIO and enable pull-up resistors and interrupts 
+		on falling edges for pins connected to switches */
+
+//	PORTA->PCR[15] =PORT_PCR_MUX(1)  | PORT_PCR_IRQC(0x09); 
+//	FPTA->PDDR &= 0u<<15;																	// configure PTA14 as INPUT
+
+	PORTC->PCR[9] = PORT_PCR_MUX(1);												// Pin PTC9 is GPIO
+	FPTC->PDDR |= 1UL<<9;																	// configure PTC14 as INPUT
+	FPTC->PCOR |= 1UL<<9;																	// configure PTC14 as INPUT
+	
+
+
+	
+	
+
+	//************************************
+	//	
+  //	enable PTA NVIC
+	//************************************
+	NVIC_SetPriority(PORTA_IRQn, 128); // 0, 64, 128 or 192
+	NVIC_ClearPendingIRQ(PORTA_IRQn); 
+	NVIC_EnableIRQ(PORTA_IRQn);
+
 	
 	
 	//************************************
 	//	 Initialize
   //	 ADC,TPM,PIT
 	//************************************
-	right_PW=0;
-	left_PW=0;
 	servo_PW=4500;
+	Init_PIT1(100000);	
 	Init_PIT(20000);																		// count-down period = 100HZ T=48Mhz/12000
+	
 	Init_PWM_motor();
   Init_PWM_servo();
 	i2c_init();																/* init i2c	*/
 	init_mma(); 												/* init mma peripheral */
-	Start_PIT();
+	//init_origin_mma();
+	
 	Init_RGB_LEDs();
-	Loop_Q_init();
+	accel_queue_init();
+	Start_PIT1();
+	Start_PIT();
+
+	
+	//PID_servo_set(float ig,float pg,float dg, float imax, float imin)
+	//PID_servo_set(2,15,18, 50, 5);
+	PID_servo_set(2,15,18, 50, 5);
+	PID_speed_set(20,30,20, 50, 0);
 	
 	
 	//put("Hello World\n");
@@ -235,117 +320,183 @@ int main (void) {
 	//Enter state machine
 	next_state=0;
 
-	left_PW=0;
+	left_PW=3000;
 	right_PW=0;
 	
 
+	
+
+	Battery_ind(4);
+
+
+
+	//****************
+	//bare board test
+	//****************
+
+
+
+//FSM:
+//0: initialized
+//1: old age
+//2: debugging
+//3: straight line
+//4: left turn
+//5: right turn
+//6: over hill
 
 
 
 	while(1){
 		switch (next_state){
 			case 0:
-				Start_PIT();
 				//if input is SW1 enter running mode state 1
 				if ((FPTC->PDIR & (1<<13))){
 					put("Racing Mode\r\n");
-					left_PW=35000;
-					right_PW=25000;
+					Control_RGB_LEDs(0,0,0);
+					left_PW=3000;
+					right_PW=0;
 					next_state=1;
 					break;
 				}
 				//if input is sw2 enter debug mode state 2
 				if ((FPTC->PDIR & (1<<17))){
 					put("Debug Mode\r\n");
+					Control_RGB_LEDs(0,0,0);
 					next_state=2;
 					break;
 				}
 				break;
 			case 1:
-			// 	put("CASE 1");
-				read_full_xyz();
-				convert_xyz_to_roll_pitch();
-			
-			
-				
-			//mid point cali
-				middle_point=0;
-			
-			//read cameras
+				PID_servo_set(10,15,15, 30, 5);
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
-			//setup dead zone
-
-		
-			//Series of checking
-			//out of track STOP!
-				if (left_track>100 && right_track>100){
-					left_PW=60000;
+				if (left_track>=100 && right_track>=100){
+					left_PW=3000;
 					right_PW=0;
-				//	put("STOP!");
 					continue;
 				}
 				
-				
-				//where is middle point
-				middle_point=middle_point+right_track-left_track;
-				
-			//accel
-				//hill!!
-				if (fabs(pitch)>30){
-					Loop_Q(1);
-					Control_RGB_LEDs(0, 1, 0);
-				}else{
-					Loop_Q(0);
-				}
-				
-				if (Loop_Q_percent()>14){
-					servo_PW=_servo_limit(4500-(middle_point)*20);
-					Control_RGB_LEDs(0, 0, 1);
-					left_PW = 40000;
-					right_PW = 20000;
-					continue;
-				}else{
-					Control_RGB_LEDs(0, 0, 0);
-				}
-
-				if (middle_point<15 && middle_point>-15){
-					servo_PW=_servo_limit(4500-(middle_point-8)*3);
-				//	if(turn_flag){
-					//		turn_flag=0;
-							left_PW = 23000;
-							right_PW = 37000;
-							//}
-					//	else{
-						//left_PW = _motor_limit(left_PW-2,0);
-						//right_PW = _motor_limit(right_PW+2u,1);
-						//}
-				}
-			 else	if (middle_point<80 && middle_point>-80){
-				  turn_flag=1;
-					servo_PW=_servo_limit(4500-(middle_point-15)*20);
-				  left_PW = 22000;
-					right_PW = 38000;
-				 // left_PW = _motor_limit(30000-60*(middle_point),0);
-				//	right_PW = _motor_limit(30000-60*(middle_point),1);
-				}
-				else{
-					turn_flag=1;
-					servo_PW=_servo_limit(4500-23*80*(middle_point < 0? -1:1)-(middle_point-80)*45);
-					left_PW = _motor_limit(20000-60*(middle_point),0);
-					right_PW = _motor_limit(40000-60*(middle_point),1);
-				}
+				left_PW=2000;
+				right_PW=1000;
 			
-				//analyze and control car
+				middle_point=right_track-left_track;
+				if (middle_point>5){
+					middle_point-=5;
+				}
+				else if (middle_point<-5){
+					middle_point+=5;
+				}else{
+					middle_point=0;
+				}
+				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point,middle_point));
 				next_state = 1;
 				break;
 			case 2:		//debug mode
 				_DEBUG_running();
+				//if input is SW1 enter running mode state 1
+/*		
+			if ((FPTC->PDIR & (1<<13))){
+					put("Experiment Mode\r\n");
+					left_PW=3000;
+					right_PW=0;
+					next_state=3;
+					break;
+				}
+				if ((FPTC->PDIR & (1<<17))){
+					put("Debug Mode\r\n");
+					Control_RGB_LEDs(0,0,0);
+					next_state=10;
+					break;
+				}
+*/			
+				break;
+			case 3:		//experiment mode
+				PID_servo_set(2,15,15, 50, 5);
+				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+				
+				if (left_track>=100 || right_track>=100){
+					left_PW=3000;
+					right_PW=0;
+					continue;
+				}
+				
+				left_PW=1800;
+				right_PW=1200;
+			
+				middle_point=right_track-left_track;
+				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point));
+				if (servo_PW>5500){		//right turn
+					uart0_putchar('R');
+					next_state=4;
+				}else if(servo_PW<3500){		//left turn
+					uart0_putchar('L');
+					next_state=5;
+				}
+				next_state=3;
+				break;
+			case 4:				//right turn
+				PID_servo_set(0,15,8, 50, 5);
+			//	left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+				
+				if (left_track>=100 || right_track>=100){
+					left_PW=3000;
+					right_PW=0;
+					continue;
+				}
+				
+				left_PW=1800;
+				right_PW=700;
+			
+				middle_point=right_track;
+				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 40 :-40),middle_point));
+				if (servo_PW>5500){		//right turn
+					uart0_putchar('R');
+					next_state=4;
+				}else if(servo_PW<3500){		//left turn
+					uart0_putchar('L');
+					next_state=5;
+				}else{
+					next_state=3;
+				}
+				break;
+			case 5:
+				PID_servo_set(0,15,8, 50, 5);
+				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+			//	right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+				
+				if (left_track>=100 || right_track>=100){
+					left_PW=3000;
+					right_PW=0;
+					continue;
+				}
+				
+				left_PW=2300;
+				right_PW=1200;
+			
+				middle_point=right_track-left_track;
+				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? -40 :40),middle_point));
+				if (servo_PW>5500){		//right turn
+					uart0_putchar('R');
+					next_state=4;
+				}else if(servo_PW<3500){		//left turn
+					uart0_putchar('L');
+					next_state=5;
+				}else{
+					next_state=3;
+				}
+				break;
+			case 10:
+					right_PW=lround(PID_kernel(&PID_speed,10-right_FB,right_FB));
+					next_state=10;
 				break;
 			default:
 				next_state=0;
-	}
+				}
+		
 	}
 }
 
@@ -353,96 +504,38 @@ int main (void) {
 
 
 void _DEBUG_running(){
-		int midpoint;
+		int mod;
 		char keyIn;
-	//	left_PW=1500;
-	//	right_PW=1500;
-/*		
-			//ADC conversion and read value
-	while((FPTC->PDIR & (1<<13))) {			// if users press SW1, this loop will be ended.
-	POT1 = Read_ADC(0xD);
-	POT2 = Read_ADC(0xC);
-	left_PW = dutyCycle(POT1);
-	right_PW = dutyCycle(POT2);
-	FB1_sum=FB1_sum+left_fb;
-	FB2_sum=FB2_sum+right_fb;
-		if (POT_COUNT_DOWN<=0){
-			put("PB1/FB1:  ");
-			//translator(FB1_sum>>13);
-			translator(left_fb);
-	    put("/");
-			translator_4(left_PW);
-			
-			put("  PB2/FB2:");
-	    //translator(FB2_sum>>13);
-			translator(right_fb);
-	    put("/");
-    	translator_4(right_PW);
-			POT_COUNT_DOWN=8192;
-			put("\r\n");
-			
-			FB1_sum=0;
-			FB2_sum=0;
-		}
-		POT_COUNT_DOWN=POT_COUNT_DOWN-1;
-	//calculate duty cycle
-	}
-*/
+		//read_xyz();
+		//convert_xyz_to_roll();
+	//	left_PW=3000;
+	//	right_PW=1000;
+		FPTC->PTOR |= 1UL<<9;
+		mod=lround(PID_kernel(&PID_speed,15-right_FB,right_FB));
+		right_PW=_motor_limit(mod);
+		accel_Q();
+		Control_RGB_LEDs(0, (fabs(current_roll) > 20)? 1:0,0);
+		Battery_ind(fabs(roll)/10);
+		//right_PW=_motor_limit(mod);
+	
 
 		if (Camera_DONE==1){
 		// DEBUG_print_track(buffer[0][1-buffer_sel]);
 		// DEBUG_print_track(buffer[1][1-buffer_sel]);
 	//		put("\r\n");
 		 //DEBUG_print_double_camera(buffer[0][1-buffer_sel],buffer[1][1-buffer_sel]);
+		
+			
 		uart0_putchar(0x00);
-		DEBUG_print_camera(buffer[0][1-buffer_sel]);
+		//DEBUG_print_camera(buffer[0][1-buffer_sel]);
+		DEBUG_print_track(buffer[0][1-buffer_sel]);
 		uart0_putchar(0x01);
-		DEBUG_print_camera(buffer[1][1-buffer_sel]);
-			
-			//int left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-	    //int right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-			
-		//DEBUG_print_midpoint(buffer[0][1-buffer_sel]);
-		//DEBUG_print_midpoint(buffer[1][1-buffer_sel]);
-		//	translator(SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]));
-		// translator(SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]));	
-		//SINGLE_TRACK_ANY(buffer[0][1-buffer_sel]);
-		//SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);			
-	//	midpoint=128+SINGLE_TRACK_ANY(buffer[0][1-buffer_sel])+SINGLE_TRACK_ANY(buffer[1][1-buffer_sel]);
-	//	midpoint=(midpoint>>1)-64;
-	//	PW3=(int)(((midpoint*3000)>>7)+3000);
-	//		put("\r\n\r");
-	/*	Camera_DONE=0;		
-		}
-		if (UART0->D == 'p')  //if user input p, enter menu
-		{
-		  Stop_PIT();
-			
-			if (buffer_sel){
-				put("\r\nPing buffer\r\n");
-			}else{
-				put("\r\nPong buffer\r\n");
-			}
-			DEBUG_print_camera(buffer[0][1-buffer_sel]);
-			put("\r\n This is data from Camera2 \r\n");
-			DEBUG_print_camera(buffer[1][1-buffer_sel]);
-			put("\r\n");
-			translator(left_fb);
-	    put("  FB1  ");
-	    translator(right_fb);
-			put("  FB2  ");
-			
-			put("\r\nEnter 'c' to continue or 'q'to quit\r\n");
-			
-			keyIn=uart0_getchar();
-		  while(!keyIn=='c' && !keyIn=='q'){
-				keyIn = uart0_getchar();
-    	}
-			if (keyIn == 'c') {
-				Start_PIT();
-				keyIn = 0;
-			}
-*/
+		//DEBUG_print_camera(buffer[1][1-buffer_sel]);
+			DEBUG_print_track(buffer[1][1-buffer_sel]);
+		//	Control_RGB_LEDs(0, (fabs(get_roll()) > 30)? 1:0,0);
+
+		
+
 }
 
 	

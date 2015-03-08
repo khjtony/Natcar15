@@ -8,7 +8,7 @@ volatile int totalcounter=0;
 
 volatile int index=0;
 int buffersize= 128*2;
-volatile byte[] inBuffer = new byte[buffersize*2];
+volatile byte inBuffer[] = new byte[2];
 int data_width=128;
 int data_height=0xff;
 int middle=data_width*2;
@@ -69,25 +69,6 @@ void Cfilter(byte input[], byte output[], int len){
            output);
 
 }
-int camera_edge_detect(byte buffer[]){
-    //drop 7 pixels on the both ends
-  int i=0;
-  int diff=0;
-  int thereshold=0x50;
-  int max_slope=0;
-  int max_pos=0;
-  for (i=15;i<128-15;i++){
-    diff = buffer[i]- buffer[i+5];
-    if (diff>thereshold){
-      if (diff>max_slope){
-        max_pos=i+2;
-        max_slope=diff;
-      }
-    }
-  }
-  return max_pos;
-
-}
 
 void Bfilter(byte input[], byte output[], int len){
   int i=0;
@@ -126,21 +107,15 @@ void draw() {
   line(0,data_height*2-0xff/2,data_width*4,data_height*2-0xff/2);
   line(0,data_height*2-2*0x40,data_width*4,data_height*2-2*0x40);
   
-  Mfilter(inBuffer,outBuffer, buffersize);
+  //Mfilter(inBuffer,outBuffer, buffersize);
   //Gfilter(inBuffer,outBuffer, buffersize);
   //Bfilter(inBuffer,outBuffer, buffersize);
   //Cfilter(inBuffer,postBuffer, buffersize);
-  Mfilter(inBuffer,outBuffer, buffersize);
-  
-  for (int i=6;i<buffersize-6;i++){     
-      line(2*(i),data_height*2-int(outBuffer[i]),2*(i+1),data_height*2-int(outBuffer[i+1]));
-  }
-  for (int i=6;i<buffersize-6;i++){  
-      line(2*(i),data_height-int(inBuffer[i]),2*(i+1),data_height-int(inBuffer[i+1]));
+  //Mfilter(inBuffer,outBuffer, buffersize);
+ // int x1=camera_edge_detect(outBuffer+127);
+  line(2*inBuffer[0],0,inBuffer[0],data_height*2);
+  line(2*inBuffer[1],0,inBuffer[1],data_height*2);
 
-  }
-  int x=camera_edge_detect(outBuffer);
-  line(2*x,0,2*x,data_height*2);
   delay(10);
 }
 
@@ -148,13 +123,12 @@ void serialEvent(Serial myPort) {
   int item;
   item=myPort.read();
   if ((item)==0x00){
-    index=0;
-//    inBuffer[index]=(byte)myPort.read();
+   index=0;
   }
    else if((item)==0x01){
-    index=128;
+    index=1;
 //    inBuffer[index]=(byte)myPort.read();
-    }else if (index<127*2){
+    }else{
       index++;
       inBuffer[index]=(byte)item;
       

@@ -13,3 +13,5 @@
 .\objects\kit_chain.o: adc0.h
 .\objects\kit_chain.o: adc16.h
 .\objects\kit_chain.o: uart.h
+.\objects\kit_chain.o: ./accel/mma8451.h
+.\objects\kit_chain.o: D:\Software\KEIL\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -14,3 +14,5 @@
 .\objects\timers.o: ADC_Kit.h
 .\objects\timers.o: adc0.h
 .\objects\timers.o: uart.h
+.\objects\timers.o: ./accel/mma8451.h
+.\objects\timers.o: ./accel/LEDs.h

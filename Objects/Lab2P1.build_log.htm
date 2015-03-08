@@ -25,30 +25,45 @@ D:\workspace\Natcar\Lab2P1.uvprojx
 Project File Date:  03/02/2015
 
 <h2>Output:</h2>
-Build target 'Blinky'
+Rebuild target 'Blinky'
+compiling adc0.c...
+compiling adc16.c...
 compiling Blinky.c...
-Blinky.c(79): warning:  #177-D: variable "left_ratio" was declared but never referenced
-        int left_ratio=20;
-Blinky.c(80): warning:  #177-D: variable "right_ratio" was declared but never referenced
-        int right_ratio=25;
-Blinky.c(82): warning:  #177-D: variable "acc_flag" was declared but never referenced
-        int acc_flag=1;
-Blinky.c(83): warning:  #550-D: variable "turn_flag" was set but never used
-        int turn_flag=0;
-Blinky.c(84): warning:  #177-D: variable "acc_count" was declared but never referenced
+Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
+  void accel_Q();
+Blinky.c(393): warning:  #223-D: function "lround" declared implicitly
+                                servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point,middle_point));
+Blinky.c(99): warning:  #177-D: variable "acc_count" was declared but never referenced
         int acc_count=0;
-Blinky.c(85): warning:  #177-D: variable "turning_high" was declared but never referenced
-        int turning_high=25000;
-Blinky.c(86): warning:  #177-D: variable "turning_low" was declared but never referenced
-        int turning_low=15000;
-Blinky.c(356): warning:  #177-D: variable "midpoint" was declared but never referenced
-                int midpoint;
-Blinky.c(357): warning:  #177-D: variable "keyIn" was declared but never referenced
+Blinky.c(514): warning:  #223-D: function "lround" declared implicitly
+                mod=lround(PID_kernel(&PID_speed,15-right_FB,right_FB));
+Blinky.c(508): warning:  #177-D: variable "keyIn" was declared but never referenced
                 char keyIn;
-Blinky.c: 9 warnings, 0 errors
+Blinky.c: 5 warnings, 0 errors
+compiling timers.c...
+Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
+  void accel_Q();
+timers.c(179): warning:  #177-D: variable "dummy" was declared but never referenced
+        int dummy=0;
+timers.c: 2 warnings, 0 errors
+compiling uart.c...
+compiling global_var.c...
+compiling ADC_Kit.c...
+compiling PWM_Kit.c...
+compiling Kit_chain.c...
+Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
+  void accel_Q();
+Kit_chain.c: 1 warning, 0 errors
+compiling core_algorithm.c...
+compiling delay.c...
+compiling i2c.c...
+compiling LEDs.c...
+compiling mma8451.c...
+assembling startup_MKL25Z4.s...
+compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=9912 RO-data=384 RW-data=120 ZI-data=1744  
-".\Objects\Lab2P1.axf" - 0 Error(s), 9 Warning(s).
+Program Size: Code=13016 RO-data=384 RW-data=132 ZI-data=1724  
+".\Objects\Lab2P1.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -77,12 +92,11 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
-Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
-ce\Natcar\RTE
-  D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include
-  D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include
-
-<h2>Collection of Component Files used:</h2>
+</pre>
+</body>
+</html>
+r\\Objects\\Lab2P1.axf" 
+ used:</h2>
 
    * Component: ARM::CMSIS:CORE:3.40.0
       Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
@@ -90,4 +104,5 @@ ce\Natcar\RTE
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
+Target not created.
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 

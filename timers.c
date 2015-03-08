@@ -5,10 +5,82 @@
 #include "stdio.h"
 #include "global_var.h"
 #include "Kit_chain.h"
+#include "./accel/mma8451.h"
+#include "./accel/LEDs.h"
 
 
 
 volatile unsigned PIT_interrupt_counter = 0;
+volatile uint8_t _right_FB;
+volatile uint8_t _left_FB;
+volatile uint8_t right_FB;
+volatile uint8_t left_FB;
+volatile uint8_t batter_count;
+volatile int8_t LED_flag=0;
+void PORTA_IRQHandler(void) {  
+
+	// clear pending interrupts
+	NVIC_ClearPendingIRQ(PORTA_IRQn);
+	
+
+	if ((PORTA->ISFR & (1u<<15))) {
+		FPTC->PSOR |= 1UL<<9;
+		//read accel and push it into Q
+	//	read_xyz();
+		//read_full_xyz();
+		//convert it into readable value;
+	//	convert_xyz_to_roll();
+		//push to Q to filtering
+		//accel_Q(roll);
+		
+	} else if (PORTA->ISFR & (1u<<1)){	//read speed sensor at PTA1
+		_right_FB+=1;
+		Control_RGB_LEDs(0, 0,LED_flag);
+		LED_flag=~LED_flag;
+	}else if (PORTA->ISFR & (1u<<2)){	//read speed sensor at PTA2
+		_left_FB+=1;
+		Control_RGB_LEDs(0, 0,LED_flag);
+		LED_flag=~LED_flag;
+	}
+	// clear status flags 
+	PORTA->ISFR = 0xffffffff;
+}
+
+
+void Init_PIT1(unsigned period_us) {
+	// Enable clock to PIT module
+	SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
+	
+	// Enable module, freeze timers in debug mode
+	PIT->MCR &= ~PIT_MCR_MDIS_MASK;
+	PIT->MCR |= PIT_MCR_FRZ_MASK;
+	
+	// Initialize PIT0 to count down from argument 
+	PIT->CHANNEL[1].LDVAL = PIT_LDVAL_TSV(period_us*24); // 24 MHz clock frequency
+
+	// No chaining
+	PIT->CHANNEL[1].TCTRL &= PIT_TCTRL_CHN_MASK;
+	
+	// Generate interrupts
+	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TIE_MASK;
+
+}
+
+
+void Start_PIT1(void) {
+// Enable counter
+	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;
+	
+}
+
+void Stop_PIT1(void) {
+// Disable counter
+	PIT->CHANNEL[1].TCTRL &= ~PIT_TCTRL_TEN_MASK;
+}
+
+
+
+
 
 
 void Init_PIT(unsigned period_us) {
@@ -38,7 +110,7 @@ void Init_PIT(unsigned period_us) {
 	//FPTB->PCOR=1; 
 	
 	/* Enable Interrupts */
-	NVIC_SetPriority(PIT_IRQn, 128); // 0, 64, 128 or 192
+	NVIC_SetPriority(PIT_IRQn, 64); // 0, 64, 128 or 192
 	NVIC_ClearPendingIRQ(PIT_IRQn); 
 	NVIC_EnableIRQ(PIT_IRQn);	
 }
@@ -81,6 +153,19 @@ void PIT_IRQHandler() {
 	} else if (PIT->CHANNEL[1].TFLG & PIT_TFLG_TIF_MASK) {
 		// clear status flag for timer channel 1
 		PIT->CHANNEL[1].TFLG &= PIT_TFLG_TIF_MASK;
+		//************************************
+	//	 Clear PIT FLAG
+  //	 PIT
+	//************************************
+	  NVIC_ClearPendingIRQ(PIT_IRQn);
+		FPTC->PTOR |= 1UL << 9;
+		get_roll();
+		left_FB=_left_FB;
+		right_FB=_right_FB;
+		//Battery_ind(_right_FB/3);
+		_left_FB=0;
+		_right_FB=0;
+		
 	} 
 }
 
@@ -182,7 +267,6 @@ return;
 
 void ADC0_IRQHandler(void){
 	unsigned char _adc_val;
-	if (ADC_FLG==0){
 	//************************************
 	//	 assert CLK signal after read Camera 1
   //	 CLK is PTE1 so FPTE->PSOR=1;
@@ -246,39 +330,6 @@ void ADC0_IRQHandler(void){
 	//***********************************
 	FPTE->PCOR=1UL<<1;  //deassert CLK signal (i.e. set PTE1 low)
 
-
-/*	
-	//toggle ADC port
-	if (Camera_DONE){
-	// ************************************
-	//	 Read left_FB
-  //	 Wheel
-	// ************************************
-	_update_wheel(0);
-	// ************************************
-	//	 Read right_FB
-  //	 Wheel
-	// ************************************
-	_update_wheel(1);
-		
-		
-
-	}
-	*/
-	
-}
-	else if(ADC_FLG==3){
-		//Wheel B
-		NVIC_ClearPendingIRQ(ADC0_IRQn);
-	  right_fb = ADC0->R[0];				// read result register
-		return;
-	}
-	else if(ADC_FLG==7){
-		NVIC_ClearPendingIRQ(ADC0_IRQn);
-	  left_fb = ADC0->R[0];				// read result register
-		return;
-	}
-	
 }
 	
 

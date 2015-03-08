@@ -10,6 +10,19 @@
 #define REG_ZHI	0x05
 #define REG_ZLO 0x06
 
+#define MMA8451_REG_OUT_X_MSB     0x01
+#define MMA8451_REG_SYSMOD        0x0B
+#define MMA8451_REG_WHOAMI        0x0D
+#define MMA8451_REG_XYZ_DATA_CFG  0x0E
+#define MMA8451_REG_PL_STATUS     0x10
+#define MMA8451_REG_PL_CFG        0x11
+#define MMA8451_REG_CTRL_REG1     0x2A
+#define MMA8451_REG_CTRL_REG2     0x2B
+#define MMA8451_REG_CTRL_REG4     0x2D
+#define MMA8451_REG_CTRL_REG5     0x2E
+
+
+
 #define REG_WHOAMI 0x0D
 #define REG_CTRL1  0x2A
 #define REG_CTRL4  0x2D
@@ -20,9 +33,11 @@
 #define M_PI (3.14159265)
 
 int init_mma(void);
+int init_origin_mma(void);
 void read_full_xyz(void);
 void read_xyz(void);
 void convert_xyz_to_roll_pitch(void);
+void convert_xyz_to_roll(void);
 
 extern float roll, pitch;
 extern int16_t acc_X, acc_Y, acc_Z;
