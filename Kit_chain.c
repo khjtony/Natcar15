@@ -221,7 +221,7 @@ void translator_4(int keyIn){
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 	// use _camera_buffer!!
   int i=0;
-	int threshold=0x40;
+	int threshold=0x45;
 	int bound=0;
 	int tempSum=0;
 	_Mfilter_Camera(buffer);
@@ -259,10 +259,10 @@ int _servo_limit(int input){
 		if (input<6000 && input >3000){
 			return input;
 		}else if(input>6000){
-		return 5500;
+		return 6000;
 		}
 		else{
-			return 3500;
+			return 3000;
 		}
 	}
 

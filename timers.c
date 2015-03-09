@@ -26,8 +26,8 @@ void PORTA_IRQHandler(void) {
 		_right_FB+=1;
 		PORTA->ISFR |= 1UL << 1;
 	}else if (PORTA->ISFR & (1u<<2)){	//read speed sensor at PTA2
-		Control_RGB_LEDs(0,LED_flag,0);
-		LED_flag=~LED_flag;
+		//Control_RGB_LEDs(0,LED_flag,0);
+		//LED_flag=~LED_flag;
 		_left_FB+=1;
 		PORTA->ISFR |= 1UL << 2;
 	}
