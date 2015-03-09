@@ -221,7 +221,7 @@ void translator_4(int keyIn){
 int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 	// use _camera_buffer!!
   int i=0;
-	int threshold=0x45;
+	int threshold=0x40;
 	int bound=0;
 	int tempSum=0;
 	_Mfilter_Camera(buffer);

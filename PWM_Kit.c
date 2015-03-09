@@ -62,7 +62,7 @@ void Init_PWM_motor(void) {
 	
 // Set period and pulse widths
 	
-	TPM0->MOD = 3000;		// Freq. = (48 MHz / 16) / 3000 = 1 kHz
+	TPM0->MOD = 3000-1;		// Freq. = (48 MHz / 16) / 3000 = 1 kHz
 	TPM0->CONTROLS[0].CnV = left_PW; 
 	TPM0->CONTROLS[2].CnV = right_PW;
 	

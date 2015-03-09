@@ -389,7 +389,7 @@ int main (void) {
 				right_PW=_motor_limit(speed_mod);
 				//speed_mod=lround(PID_kernel(&PID_speed_L,15-left_FB,left_FB));
 				//left_PW=_motor_limit(speed_mod);
-				left_PW=1000;
+				left_PW=_motor_limit(speed_mod);
 				
 			
 				middle_point=right_track-left_track;
