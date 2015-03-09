@@ -104,7 +104,7 @@ void setup() {
   // List all the available serial ports:
   println(Serial.list());
   // Open the port you are using at the rate you want:
-  myPort = new Serial(this, Serial.list()[1], 57600);
+  myPort = new Serial(this, Serial.list()[1], 115200);
   for (int i=0;i>buffersize;i++){
     inBuffer[i]=0x00;
   }
@@ -126,11 +126,11 @@ void draw() {
   line(0,data_height*2-0xff/2,data_width*4,data_height*2-0xff/2);
   line(0,data_height*2-2*0x40,data_width*4,data_height*2-2*0x40);
   
-  Mfilter(inBuffer,outBuffer, buffersize);
+  //Mfilter(inBuffer,outBuffer, buffersize);
   //Gfilter(inBuffer,outBuffer, buffersize);
   //Bfilter(inBuffer,outBuffer, buffersize);
   //Cfilter(inBuffer,postBuffer, buffersize);
-  Mfilter(inBuffer,outBuffer, buffersize);
+  //Mfilter(inBuffer,outBuffer, buffersize);
   
   for (int i=6;i<buffersize-6;i++){     
       line(2*(i),data_height*2-int(outBuffer[i]),2*(i+1),data_height*2-int(outBuffer[i+1]));
@@ -139,6 +139,7 @@ void draw() {
       line(2*(i),data_height-int(inBuffer[i]),2*(i+1),data_height-int(inBuffer[i+1]));
 
   }
+  line(0,data_height-0x40,data_width*4,data_height-0x40);
   int x=camera_edge_detect(outBuffer);
   line(2*x,0,2*x,data_height*2);
   delay(10);
