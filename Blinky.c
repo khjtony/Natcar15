@@ -304,7 +304,7 @@ int main (void) {
 	//************************************
 	servo_PW=4500;
 	Init_PIT1(100000);	
-	Init_PIT(20000);																		// count-down period = 100HZ T=48Mhz/12000
+	Init_PIT(18000);																		// count-down period = 100HZ T=48Mhz/12000
 	
 	Init_PWM_motor();
   Init_PWM_servo();
@@ -321,8 +321,8 @@ int main (void) {
 	//PID_servo_set(float ig,float pg,float dg, float imax, float imin)
 	//PID_servo_set(2,15,18, 50, 5);
 	PID_servo_set(2,15,18, 50, 5);
-	PID_speed_set(&PID_speed_R,20,30,20, 50, 0);
-	PID_speed_set(&PID_speed_L,20,10,20, 50, 0);
+	PID_speed_set(&PID_speed_R,20,30,60, 50, 0);
+	PID_speed_set(&PID_speed_L,20,30,60, 50, 0);
 	
 	
 	//put("Hello World\n");
@@ -379,21 +379,39 @@ int main (void) {
 				}
 				break;
 			case 1:
-				PID_servo_set(2,15,15, 50, 5);
+				PID_servo_set(2,20,30, 50, 5);
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
-
-				
-				speed_mod=lround(PID_kernel(&PID_speed_R,10-right_FB,right_FB));
+				speed_mod=lround(PID_kernel(&PID_speed_R,13-right_FB,right_FB));
+			
+				if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
 				right_PW=_motor_limit(speed_mod);
-				//speed_mod=lround(PID_kernel(&PID_speed_L,15-left_FB,left_FB));
-				//left_PW=_motor_limit(speed_mod);
+				
+				
+				
+				speed_mod=lround(PID_kernel(&PID_speed_L,13-left_FB,left_FB));
+					if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
 				left_PW=_motor_limit(speed_mod);
 				
 			
+					
+					
 				middle_point=right_track-left_track;
-				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point));
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 15 :-15),middle_point)));
+				if (middle_point>40){
+					next_state=5;
+				}else if(middle_point<-40){
+					next_state=4;
+				}else if (fabs(current_roll)>25){
+					next_state=9;
+				}
+					
+				
 				break;
 			case 2:		//debug mode
 				_DEBUG_running();
@@ -415,35 +433,111 @@ int main (void) {
 */			
 				break;
 			case 3:		//experiment mode
-				PID_servo_set(2,15,15, 50, 5);
+				break;
+				
+				
+			case 4:	//left_turn
+				PID_servo_set(2,25,25, 50, 5);
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
-				if (left_track>=100 || right_track>=100){
-					left_PW=3000;
-					right_PW=0;
-					continue;
-				}
-				
-				speed_mod=lround(PID_kernel(&PID_speed_R,10-right_FB,right_FB));
+				speed_mod=lround(PID_kernel(&PID_speed_R,12-right_FB,right_FB));
+			
+				if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
 				right_PW=_motor_limit(speed_mod);
-				//speed_mod=lround(PID_kernel(&PID_speed_L,15-left_FB,left_FB));
-				left_PW=_motor_limit(3000-speed_mod);
+				
+				
+				
+				speed_mod=lround(PID_kernel(&PID_speed_L,7-left_FB,left_FB));
+					if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
+				left_PW=_motor_limit(speed_mod);
+				
+					
+				middle_point=right_track-left_track;
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 11 :-11),middle_point)));
+				if (middle_point>40){
+					next_state=5;
+				}else if(middle_point<-40){
+					next_state=4;
+				}else if (fabs(current_roll)>20){
+					next_state=9;
+				}
+				else {
+					next_state=1;
+				}
+			case 5:	//left_turn
+				PID_servo_set(2,25,25, 50, 5);
+				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+				
+				speed_mod=lround(PID_kernel(&PID_speed_R,7-right_FB,right_FB));
+			
+				if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
+				right_PW=_motor_limit(speed_mod);
+				
+				
+				
+				speed_mod=lround(PID_kernel(&PID_speed_L,12-left_FB,left_FB));
+					if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
+				left_PW=_motor_limit(speed_mod);
 				
 			
+					
+					
 				middle_point=right_track-left_track;
-				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point));
-				if (servo_PW>5500){		//right turn
-					uart0_putchar('R');
-					next_state=4;
-				}else if(servo_PW<3500){		//left turn
-					uart0_putchar('L');
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? -11 :11),middle_point)));
+				if (middle_point>40){
 					next_state=5;
+				}else if(middle_point<-40){
+					next_state=4;
+				}else if (fabs(current_roll)>20){
+					next_state=9;
 				}
-				next_state=3;
-				break;
-		
-		
+				else {
+					next_state=1;
+				}
+				
+			case 9:
+				PID_servo_set(2,15,18, 50, 5);
+				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
+				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
+				
+				speed_mod=lround(PID_kernel(&PID_speed_R,6-right_FB,right_FB));
+			
+				if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
+				right_PW=_motor_limit(speed_mod);
+				
+				speed_mod=lround(PID_kernel(&PID_speed_L,6-left_FB,left_FB));
+					if (left_track>100 && right_track >100){
+					speed_mod=0;
+					}
+				left_PW=_motor_limit(speed_mod);
+				
+			
+					
+					
+				middle_point=right_track-left_track;
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 10 :-10),middle_point)));
+				if (middle_point>40){
+					next_state=5;
+				}else if(middle_point<-40){
+					next_state=4;
+				}else if (fabs(current_roll)>25){
+					next_state=9;
+				}else {
+					next_state=1;
+				}
+				
 			}
 	}
 }

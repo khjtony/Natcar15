@@ -262,7 +262,7 @@ int _servo_limit(int input){
 		return 5500;
 		}
 		else{
-			return 3300;
+			return 3500;
 		}
 	}
 
@@ -299,7 +299,7 @@ int camera_edge_detect(volatile char unsigned *buffer,uint8_t option){
 	uint8_t max_pos=0;
 	uint8_t max_the=0;
 	int diff=0;
-	unsigned char thereshold=0x40;
+	unsigned char thereshold=0x3a;
 	uint8_t vol_the=SINGLE_TRACK_SIDE(buffer);
 	for (i=15;i<128-15;i++){
 		diff = buffer[i]>buffer[i+4] ? buffer[i]-buffer[i+4] :  buffer[i+4]-buffer[i] ;
