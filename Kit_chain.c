@@ -223,9 +223,12 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
   int i=0;
 	int threshold=0x45;
 	int bound=0;
+	int leftSum=0;
+	int rightSum=0;
 	int tempSum=0;
 	_Mfilter_Camera(buffer);
  	i=9;
+	
 	for(i=5;i<127-5;i++){
 		//tempSum=buffer[i-1]+buffer[i]+buffer[i+1];
 		//tempSum=tempSum/3;
@@ -234,8 +237,50 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 			bound++;
 		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 	}
+	/*
+	for (i=5;i<40-5;i++){
+		leftSum+=buffer[i];
+	}
+	for (i=127-5;i<127-40;i--){
+		rightSum+=buffer[i];
+	}
+	
+	if (rightSum>leftSum)
+	{return bound;}
+	else{ return 0-bound;}
+	*/
 	return bound;
 }
+
+int SINGLE_TRACK_SIDE_ADV(volatile char unsigned *buffer){
+	// use _camera_buffer!!
+  int i=0;
+	int threshold=0x45;
+	int bound=0;
+	int tempSum=0;
+	int sign=0;
+	//_Mfilter_Camera(buffer);
+ 	i=9;
+	
+	for(i=5;i<127-5;i++){
+		//tempSum=buffer[i-1]+buffer[i]+buffer[i+1];
+		//tempSum=tempSum/3;
+		tempSum=buffer[i];
+		if (tempSum<threshold){
+			bound++;
+		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+	}
+	
+	if (buffer[bound-5]>buffer[bound+5]){
+		sign=1;
+	}else{
+		sign=-1;
+	}
+	
+	return bound*sign;
+}
+
+
 
 
 
@@ -259,10 +304,10 @@ int _servo_limit(int input){
 		if (input<6000 && input >3000){
 			return input;
 		}else if(input>6000){
-		return 6000;
+		return 5850;
 		}
 		else{
-			return 3000;
+			return 3150;
 		}
 	}
 
@@ -293,41 +338,74 @@ void _Mfilter_Camera(volatile uint8_t* buffer){
 }
 
 
-int camera_edge_detect(volatile char unsigned *buffer,uint8_t option){
+int camera_edge_detect(volatile char unsigned *buffer){
 		//drop 7 pixels on the both ends
+	/*
+	int the=0x45;
+	int the1=0x20;
 	int i=0;
-	uint8_t max_pos=0;
-	uint8_t max_the=0;
-	int diff=0;
-	unsigned char thereshold=0x3a;
-	uint8_t vol_the=SINGLE_TRACK_SIDE(buffer);
-	for (i=15;i<128-15;i++){
-		diff = buffer[i]>buffer[i+4] ? buffer[i]-buffer[i+4] :  buffer[i+4]-buffer[i] ;
-		if (diff > thereshold & diff > max_the){
-			max_the=diff;
-			max_pos=i+1;
-			max_pos=127-max_pos;
+	if (buffer[64]<the){
+		for (i=64;i>15;i--){
+			if(buffer[i]-buffer[64]>the1){
+				return 0-i;
+			}
+		}
+		for (i=64;i<127-15;i++){
+			if(buffer[i]-buffer[64]>the1){
+				return i-127;
+			}
 		}
 	}
-	switch (option){
-		case 0:		//left
-			if (max_pos>=100 || max_pos<=20){
-				return vol_the;
+	else{
+		for (i=64;i>15;i--){
+			if(buffer[64]-buffer[i]>the1){
+				return i;
 			}
-			left_camera_last=max_pos;
-			break;
-		case 1:		//right
-			if (max_pos>=100 || max_pos<=20){
-				return 127-vol_the;
+		}
+		for (i=64;i<127-15;i++){
+			if(buffer[i]-buffer[64]>the1){
+				return 127-i;
 			}
-			right_camera_last=max_pos;
-			break;
+		}
 	}
-	return max_pos;
+	*/
+	
+	int i=0;
+	int v1=0;
+	int v2=0;
+	int tempSum;
+	int threshold=0x45;
+	int bound;
+//	for(i=5;i<127-5;i++){
+		//tempSum=buffer[i-1]+buffer[i]+buffer[i+1];
+		//tempSum=tempSum/3;
+		//tempSum=buffer[i];
+		//if (tempSum<threshold){
+		///	bound++;
+		//}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+//	}
+	
+	//if (bound>100){
+//		return 127-5;
+//	}else if(bound<20){
+//		return 5;
+//	}
+	
+	
+	for (i=5;i<127-5;i++){
+		v1=buffer[i-1];
+		v2=buffer[i+1];
+		if (v1>v2 && v1-v2>0x20){
+			return 0-i;
+		}else if(v2-v1>0x20){
+			return 127-i;
+		}
+	}
+	return 0;
 }
 
-void DEBUG_camera_edge_detect(volatile char unsigned *buffer,uint8_t option){
-	uint8_t pos=camera_edge_detect(buffer,option);
+void DEBUG_camera_edge_detect(volatile char unsigned *buffer){
+	uint8_t pos=camera_edge_detect(buffer);
 	if (pos==0x00 || pos==0x01){
 			uart0_putchar(0x02);
 			//translator(0x01);
