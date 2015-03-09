@@ -29,31 +29,19 @@ Rebuild target 'Blinky'
 compiling adc0.c...
 compiling adc16.c...
 compiling Blinky.c...
-Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
-  void accel_Q();
-Blinky.c(393): warning:  #223-D: function "lround" declared implicitly
-                                servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point,middle_point));
-Blinky.c(99): warning:  #177-D: variable "acc_count" was declared but never referenced
+Blinky.c(388): warning:  #223-D: function "lround" declared implicitly
+                                speed_mod=lround(PID_kernel(&PID_speed_R,10-right_FB,right_FB));
+Blinky.c(101): warning:  #177-D: variable "acc_count" was declared but never referenced
         int acc_count=0;
-Blinky.c(514): warning:  #223-D: function "lround" declared implicitly
-                mod=lround(PID_kernel(&PID_speed,15-right_FB,right_FB));
-Blinky.c(508): warning:  #177-D: variable "keyIn" was declared but never referenced
-                char keyIn;
-Blinky.c: 5 warnings, 0 errors
+Blinky.c(457): warning:  #223-D: function "lround" declared implicitly
+                mod=lround(PID_kernel(&PID_speed_R,7-right_FB,right_FB));
+Blinky.c: 3 warnings, 0 errors
 compiling timers.c...
-Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
-  void accel_Q();
-timers.c(179): warning:  #177-D: variable "dummy" was declared but never referenced
-        int dummy=0;
-timers.c: 2 warnings, 0 errors
 compiling uart.c...
 compiling global_var.c...
 compiling ADC_Kit.c...
 compiling PWM_Kit.c...
 compiling Kit_chain.c...
-Kit_chain.h(30): warning:  #1295-D: Deprecated declaration accel_Q - give arg types
-  void accel_Q();
-Kit_chain.c: 1 warning, 0 errors
 compiling core_algorithm.c...
 compiling delay.c...
 compiling i2c.c...
@@ -62,8 +50,8 @@ compiling mma8451.c...
 assembling startup_MKL25Z4.s...
 compiling system_MKL25Z4.c...
 linking...
-Program Size: Code=13016 RO-data=384 RW-data=132 ZI-data=1724  
-".\Objects\Lab2P1.axf" - 0 Error(s), 8 Warning(s).
+Program Size: Code=12464 RO-data=384 RW-data=132 ZI-data=1748  
+".\Objects\Lab2P1.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -92,17 +80,7 @@ Package Vendor: Keil
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\ARM\startup_MKL25Z4.s
       Source file:   Device\Source\system_MKL25Z4.c
-</pre>
-</body>
-</html>
-r\\Objects\\Lab2P1.axf" 
- used:</h2>
-
-   * Component: ARM::CMSIS:CORE:3.40.0
-      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
-
-   * Component: Keil::Device:Startup:1.0.0
-      Source file:   Device\Source\ARM\startup_MKL25Z4.s
-      Source file:   Device\Source\system_MKL25Z4.c
-Target not created.
 Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
+
+Load "D:\\workspace\\Natcar\\Objects\\Lab2P1.axf" 
+d.

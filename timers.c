@@ -22,28 +22,17 @@ void PORTA_IRQHandler(void) {
 	// clear pending interrupts
 	NVIC_ClearPendingIRQ(PORTA_IRQn);
 	
-
-	if ((PORTA->ISFR & (1u<<15))) {
-		FPTC->PSOR |= 1UL<<9;
-		//read accel and push it into Q
-	//	read_xyz();
-		//read_full_xyz();
-		//convert it into readable value;
-	//	convert_xyz_to_roll();
-		//push to Q to filtering
-		//accel_Q(roll);
-		
-	} else if (PORTA->ISFR & (1u<<1)){	//read speed sensor at PTA1
+	if (PORTA->ISFR & (1u<<1)){	//read speed sensor at PTA1
 		_right_FB+=1;
-		Control_RGB_LEDs(0, 0,LED_flag);
-		LED_flag=~LED_flag;
+		PORTA->ISFR |= 1UL << 1;
 	}else if (PORTA->ISFR & (1u<<2)){	//read speed sensor at PTA2
-		_left_FB+=1;
-		Control_RGB_LEDs(0, 0,LED_flag);
+		Control_RGB_LEDs(0,LED_flag,0);
 		LED_flag=~LED_flag;
+		_left_FB+=1;
+		PORTA->ISFR |= 1UL << 2;
 	}
 	// clear status flags 
-	PORTA->ISFR = 0xffffffff;
+	
 }
 
 
@@ -158,11 +147,10 @@ void PIT_IRQHandler() {
   //	 PIT
 	//************************************
 	  NVIC_ClearPendingIRQ(PIT_IRQn);
-		FPTC->PTOR |= 1UL << 9;
 		get_roll();
 		left_FB=_left_FB;
 		right_FB=_right_FB;
-		//Battery_ind(_right_FB/3);
+	//	Battery_ind(_left_FB);
 		_left_FB=0;
 		_right_FB=0;
 		
@@ -176,7 +164,6 @@ void PIT_IRQHandler() {
 
 
 void _update_camera(){
-	int dummy=0;
 	//************************************
 	//	 Using channel b
   //	 Camera

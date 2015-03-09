@@ -27,7 +27,7 @@ void translator_4(int keyIn);
 void _DEBUG_running(void);
 int _servo_limit(int input);
 int _motor_limit(int);
-void accel_Q();
+void accel_Q(void);
 void accel_queue_init(void);
 int8_t get_roll(void);
 void Battery_ind(uint8_t count);

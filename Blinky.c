@@ -8,13 +8,13 @@
 // Toggle output on PTB0 at f = 1/(2*100 us) = 5 kHz
 
 #include <MKL25Z4.H>
+#include <math.h>
 #include <stdio.h>
 #include "Blinkly.h"
 #include "global_var.h"
 #include "ADC_kit.h"
 #include "Kit_chain.h"
 #include "core_algorithm.h"
-#include <math.h>
 #include "./accel/GPIO_defs.h"
 #include "./accel/LEDs.h"
 #include "./accel/i2c.h"
@@ -39,7 +39,8 @@ typedef struct {
 }PIT_car;
 
 PIT_car PID_servo;
-PIT_car PID_speed;
+PIT_car PID_speed_L;
+PIT_car PID_speed_R;
 
 
 void translator(char keyIn);  //a translator to convert input value to char
@@ -52,12 +53,13 @@ void put(char *ptr_str)  //copied put function
 	}
 }
 
-void PID_speed_set(float ig,float pg,float dg, float imax, float imin){
-	PID_speed.dGain=dg;
-	PID_speed.iGain=ig;
-	PID_speed.pGain=pg;
-	PID_speed.iMax=imax;
-	PID_speed.iMin=imin;
+void PID_speed_set(PIT_car* PID_speed, float ig,float pg,float dg, float imax, float imin){
+	PID_speed->dGain=dg;
+	PID_speed->iGain=ig;
+	PID_speed->pGain=pg;
+	PID_speed->iMax=imax;
+	PID_speed->iMin=imin;
+	
 	
 }
 void PID_servo_set(float ig,float pg,float dg, float imax, float imin){
@@ -97,6 +99,7 @@ int main (void) {
 	int right_track;
 	int middle_point=-20;
 	int acc_count=0;
+	int speed_mod=0;
 
 	SIM->SCGC5  |= (SIM_SCGC5_PORTA_MASK
 									| SIM_SCGC5_PORTB_MASK
@@ -223,6 +226,12 @@ int main (void) {
   //	H-Bridge_B_	FTM
 	//************************************
 	//Done in Motor Initial
+	//PORTC -> PCR[2] = PORT_PCR_MUX(1) |  PORT_PCR_PS_MASK;
+	//FPTC -> PDOR |= 1UL <<2;
+	//FPTC->PSOR |= 1UL <<2;
+	//PORTC -> PCR[4] = PORT_PCR_MUX(1) |  PORT_PCR_PS_MASK;
+	//FPTC -> PDOR |= 1UL <<4;
+	//FPTC->PSOR |= 1UL <<4;
 	
 	//************************************
 	//	H-bridge Enable
@@ -312,7 +321,8 @@ int main (void) {
 	//PID_servo_set(float ig,float pg,float dg, float imax, float imin)
 	//PID_servo_set(2,15,18, 50, 5);
 	PID_servo_set(2,15,18, 50, 5);
-	PID_speed_set(20,30,20, 50, 0);
+	PID_speed_set(&PID_speed_R,20,30,20, 50, 0);
+	PID_speed_set(&PID_speed_L,20,10,20, 50, 0);
 	
 	
 	//put("Hello World\n");
@@ -320,7 +330,7 @@ int main (void) {
 	//Enter state machine
 	next_state=0;
 
-	left_PW=3000;
+	left_PW=0;
 	right_PW=0;
 	
 
@@ -348,6 +358,7 @@ int main (void) {
 
 
 	while(1){
+		//FPTC->PCOR |= 1UL <<2;
 		switch (next_state){
 			case 0:
 				//if input is SW1 enter running mode state 1
@@ -368,30 +379,21 @@ int main (void) {
 				}
 				break;
 			case 1:
-				PID_servo_set(10,15,15, 30, 5);
+				PID_servo_set(2,15,15, 50, 5);
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
-				if (left_track>=100 && right_track>=100){
-					left_PW=3000;
-					right_PW=0;
-					continue;
-				}
+
 				
-				left_PW=2000;
-				right_PW=1000;
+				speed_mod=lround(PID_kernel(&PID_speed_R,10-right_FB,right_FB));
+				right_PW=_motor_limit(speed_mod);
+				//speed_mod=lround(PID_kernel(&PID_speed_L,15-left_FB,left_FB));
+				//left_PW=_motor_limit(speed_mod);
+				left_PW=1000;
+				
 			
 				middle_point=right_track-left_track;
-				if (middle_point>5){
-					middle_point-=5;
-				}
-				else if (middle_point<-5){
-					middle_point+=5;
-				}else{
-					middle_point=0;
-				}
-				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point,middle_point));
-				next_state = 1;
+				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point));
 				break;
 			case 2:		//debug mode
 				_DEBUG_running();
@@ -423,8 +425,11 @@ int main (void) {
 					continue;
 				}
 				
-				left_PW=1800;
-				right_PW=1200;
+				speed_mod=lround(PID_kernel(&PID_speed_R,10-right_FB,right_FB));
+				right_PW=_motor_limit(speed_mod);
+				//speed_mod=lround(PID_kernel(&PID_speed_L,15-left_FB,left_FB));
+				left_PW=_motor_limit(3000-speed_mod);
+				
 			
 				middle_point=right_track-left_track;
 				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point));
@@ -437,66 +442,9 @@ int main (void) {
 				}
 				next_state=3;
 				break;
-			case 4:				//right turn
-				PID_servo_set(0,15,8, 50, 5);
-			//	left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-				
-				if (left_track>=100 || right_track>=100){
-					left_PW=3000;
-					right_PW=0;
-					continue;
-				}
-				
-				left_PW=1800;
-				right_PW=700;
-			
-				middle_point=right_track;
-				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 40 :-40),middle_point));
-				if (servo_PW>5500){		//right turn
-					uart0_putchar('R');
-					next_state=4;
-				}else if(servo_PW<3500){		//left turn
-					uart0_putchar('L');
-					next_state=5;
-				}else{
-					next_state=3;
-				}
-				break;
-			case 5:
-				PID_servo_set(0,15,8, 50, 5);
-				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
-			//	right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
-				
-				if (left_track>=100 || right_track>=100){
-					left_PW=3000;
-					right_PW=0;
-					continue;
-				}
-				
-				left_PW=2300;
-				right_PW=1200;
-			
-				middle_point=right_track-left_track;
-				servo_PW=4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? -40 :40),middle_point));
-				if (servo_PW>5500){		//right turn
-					uart0_putchar('R');
-					next_state=4;
-				}else if(servo_PW<3500){		//left turn
-					uart0_putchar('L');
-					next_state=5;
-				}else{
-					next_state=3;
-				}
-				break;
-			case 10:
-					right_PW=lround(PID_kernel(&PID_speed,10-right_FB,right_FB));
-					next_state=10;
-				break;
-			default:
-				next_state=0;
-				}
 		
+		
+			}
 	}
 }
 
@@ -505,39 +453,38 @@ int main (void) {
 
 void _DEBUG_running(){
 		int mod;
-		char keyIn;
-		//read_xyz();
-		//convert_xyz_to_roll();
-	//	left_PW=3000;
-	//	right_PW=1000;
 		FPTC->PTOR |= 1UL<<9;
-		mod=lround(PID_kernel(&PID_speed,15-right_FB,right_FB));
+		mod=lround(PID_kernel(&PID_speed_R,7-right_FB,right_FB));
 		right_PW=_motor_limit(mod);
+		
+		//mod=lround(fabs(PID_kernel(&PID_speed_L,6-left_FB,left_FB)));
+		left_PW=_motor_limit(mod);
+	//	Battery_ind(left_FB/5);
 		accel_Q();
 		Control_RGB_LEDs(0, (fabs(current_roll) > 20)? 1:0,0);
-		Battery_ind(fabs(roll)/10);
+	//	Battery_ind(fabs(roll)/10);
 		//right_PW=_motor_limit(mod);
 	
 
-		if (Camera_DONE==1){
+	//	if (Camera_DONE==1){
 		// DEBUG_print_track(buffer[0][1-buffer_sel]);
 		// DEBUG_print_track(buffer[1][1-buffer_sel]);
 	//		put("\r\n");
 		 //DEBUG_print_double_camera(buffer[0][1-buffer_sel],buffer[1][1-buffer_sel]);
 		
 			
-		uart0_putchar(0x00);
+//		uart0_putchar(0x00);
 		//DEBUG_print_camera(buffer[0][1-buffer_sel]);
-		DEBUG_print_track(buffer[0][1-buffer_sel]);
-		uart0_putchar(0x01);
+		//DEBUG_print_track(buffer[0][1-buffer_sel]);
+		//uart0_putchar(0x01);
 		//DEBUG_print_camera(buffer[1][1-buffer_sel]);
-			DEBUG_print_track(buffer[1][1-buffer_sel]);
+			//DEBUG_print_track(buffer[1][1-buffer_sel]);
 		//	Control_RGB_LEDs(0, (fabs(get_roll()) > 30)? 1:0,0);
 
 		
 
-}
+//}
 
 	
-	}
+}
 

@@ -244,10 +244,10 @@ int SINGLE_TRACK_SIDE(volatile char unsigned *buffer){
 
 
 int _motor_limit(int input){
-		if (input<3000 && input >0){
+		if (input<= 3000 && input >0){
 			return input;
 		}else if(input>3000){
-		return 3000;
+		return 2999;
 		}
 		else{
 			return 0;

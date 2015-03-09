@@ -37,10 +37,10 @@ extern long int FB2_sum;
 extern long int state_machine_timer;
 extern unsigned char POT1;
 extern unsigned char POT2;
-volatile extern int8_t current_roll;
-volatile extern uint8_t right_FB;
-volatile extern uint8_t left_FB;
-volatile extern uint8_t _right_FB;
-volatile extern uint8_t _left_FB;
+extern volatile int8_t current_roll;
+extern volatile uint8_t right_FB;
+extern volatile uint8_t left_FB;
+extern volatile uint8_t _right_FB;
+extern volatile uint8_t _left_FB;
 
 #endif
