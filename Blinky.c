@@ -405,6 +405,7 @@ int main (void) {
 				//middle_point=(middle_point+last)>>2;
 					
 					middle_point=right_track-left_track;
+<<<<<<< HEAD
 				if (middle_point>6){
 					servo_err=middle_point-6;
 				}
@@ -412,6 +413,13 @@ int main (void) {
 					servo_err=middle_point+6;
 				}else{
 					servo_err=0;
+=======
+				if (middle_point>7){
+					servo_err=middle_point-3;
+				}
+				else if(middle_point<-7){
+					servo_err=middle_point+3;
+>>>>>>> PID
 				}
 					
 					
@@ -469,7 +477,11 @@ int main (void) {
 				
 			case 4:	//left_turn
 				Battery_ind(1);
+<<<<<<< HEAD
 				PID_servo_set(2,15,18, 60, 5);
+=======
+				PID_servo_set(0.1,10,27, 50, 5);
+>>>>>>> PID
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
@@ -489,6 +501,7 @@ int main (void) {
 				left_PW=_motor_limit(speed_mod);
 				
 					
+<<<<<<< HEAD
 				middle_point=(middle_point+last)>>2;
 			
 					
@@ -500,10 +513,25 @@ int main (void) {
 					servo_err=middle_point+4;
 				}else{
 					servo_err=0;
+=======
+				//middle_point=(middle_point+last)>>2;
+			
+					
+					middle_point=right_track-left_track;
+			/*	if (middle_point>4){
+					servo_err=middle_point-2;
+>>>>>>> PID
 				}
+				else if(middle_point<-4){
+					servo_err=middle_point+2;
+				} */
 					
 					
+<<<<<<< HEAD
 				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,servo_err-9,middle_point)));
+=======
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-5,middle_point)));
+>>>>>>> PID
 				if (middle_point>30){
 					next_state=5;
 				}else if(middle_point<-30){
@@ -521,7 +549,11 @@ int main (void) {
 				
 			case 5:	//right_turn
 				Battery_ind(4);
+<<<<<<< HEAD
 				PID_servo_set(2,15,18, 60, 5);
+=======
+				PID_servo_set(0.01,10,27, 50, 5);
+>>>>>>> PID
 				left_track=SINGLE_TRACK_SIDE(buffer[0][1-buffer_sel]);
 				right_track=SINGLE_TRACK_SIDE(buffer[1][1-buffer_sel]);
 				
@@ -543,6 +575,7 @@ int main (void) {
 			
 					
 					
+<<<<<<< HEAD
 
 				middle_point=(middle_point+last)>>2;
 					
@@ -554,13 +587,28 @@ int main (void) {
 					servo_err=middle_point+4;
 				}else{
 					servo_err=0;
+=======
+				//middle_point=(middle_point+last)>>2;
+					
+				middle_point=right_track-left_track;
+			/*	if (middle_point>4){
+					servo_err=middle_point-2;
+>>>>>>> PID
 				}
+				else if(middle_point<-4){
+					servo_err=middle_point+2;
+				}*/
 					
 					
+<<<<<<< HEAD
 				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,servo_err+9,middle_point)));
 				if (middle_point>30){
+=======
+				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point+5,middle_point)));
+				if (middle_point>40){
+>>>>>>> PID
 					next_state=5;
-				}else if(middle_point<-30){
+				}else if(middle_point<-40){
 					next_state=4;
 				}else if (fabs(current_roll)>20){
 					next_state=9;
@@ -594,9 +642,9 @@ int main (void) {
 					
 				middle_point=right_track-left_track;
 				servo_PW=_servo_limit(4500-lround(PID_kernel(&PID_servo,middle_point-(middle_point>0? 7 :-7),middle_point)));
-				if (middle_point>40){
+				if (middle_point>30){
 					next_state=5;
-				}else if(middle_point<-40){
+				}else if(middle_point<-30){
 					next_state=4;
 				}else if (fabs(current_roll)>25){
 					next_state=9;

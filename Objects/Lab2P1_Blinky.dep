@@ -16,7 +16,11 @@ I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h)(0x53F
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h)(0x53FFD3AA)
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\system_MKL25Z4.h)(0x516886DE)
 I (adc16.h)(0x545D34C4)
+<<<<<<< HEAD
 F (.\Blinky.c)(0x54FD910B)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\blinky.o --omf_browse .\objects\blinky.crf --depend .\objects\blinky.d)
+=======
+F (.\Blinky.c)(0x54FD828D)(-c --cpu Cortex-M0+ -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork -I D:\workspace\Natcar\RTE-I D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include-I D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include-D_RTE_ -DMKL25Z128xxx4-o .\objects\blinky.o --omf_browse .\objects\blinky.crf --depend .\objects\blinky.d)
+>>>>>>> PID
 I (D:\Software\KEIL\ARM\PACK\Keil\Kinetis_KLxx_DFP\1.4.0\Device\Include\MKL25Z4.H)(0x516886DE)
 I (D:\Software\KEIL\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm0plus.h)(0x53FD12DA)
 I (D:\Software\KEIL\ARM\ARMCC\include\stdint.h)(0x541A7E7A)
